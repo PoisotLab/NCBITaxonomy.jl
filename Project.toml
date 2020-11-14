@@ -9,4 +9,4 @@ MD5 = "6ac74813-4b46-53a4-afec-0b5dc9d7885c"
 Tar = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 
 [compat]
-julia = "1.2"
+julia = "1.3"
