@@ -1,3 +1,3 @@
 macro ncbi_str(s)
-    @info "Looking for $(s)"
+    return NCBITaxonomy.names_table[findfirst(isequal(Symbol(s)), NCBITaxonomy.names_table.name),:]
 end
