@@ -16,12 +16,18 @@ chk = split(readlines(chk_file)[1], " ")[1]
 function download_dump(url, chk, dest)
     @info "Downloading the taxonomy data from $(url)"
     dumps = joinpath(@__DIR__, dest)
-    ispath(dest) || mkpath(dest)
+    if ispath(dumps)
+        @info "Removing the previous version of the taxonomy"
+        rm(dumps; force=true, recursive=true)
+        mkpath(dumps)
+    else
+        mkpath(dumps)
+    end
     arc = download(url)
     vrf = bytes2hex(open(MD5.md5, arc))
     vrf == chk || throw(ErrorException("Wrong checksum for the NCBI taxonomy archive file - unable to download"))
     write(joinpath(@__DIR__, ".checksum"), vrf)
-    Tar.extract(GZip.open(arc), dest)
+    Tar.extract(GZip.open(arc), dumps)
 end
 
 # The next block is about making sure that we don't download something that has
@@ -49,6 +55,15 @@ ispath(tables) || mkpath(tables)
 # Paths of the actual files
 ncbi_names_file = joinpath(@__DIR__, "dump", "names.dmp")
 
+function _materialize_data(::Type{T}, v) where {T <: Type}
+    if v != ""
+        T <: Number && return parse(T, v)
+        T <: Symbol && return Symbol(v)
+    else
+        return missing
+    end
+end
+
 # Get the data
 @info "Building the names file"
 ncbi_names = DataFrames.DataFrame(tax_id=Int[], name=Symbol[], unique_name=Union{Symbol,Missing}[], class=Symbol[])
@@ -57,12 +72,7 @@ for names_line in readlines(ncbi_names_file)
     t = String.(split(names_line, ncbi_dump_separator)[1:(end-1)])
     r = Vector{Any}(undef, length(t))
     for (i,e) in enumerate(t)
-        r[i] = missing
-        if e != ""
-            T = names_columns_types[i]
-            T <: Number && (r[i] = parse(T, e))
-            T <: Symbol && (r[i] = Symbol(e))
-        end
+        r[i] = _materialize_data(names_columns_types[i], r)
     end
     push!(ncbi_names, tuple(r...))
 end
