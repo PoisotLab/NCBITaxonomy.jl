@@ -2,6 +2,7 @@ import MD5
 import GZip
 import Tar
 import Arrow
+import DataFrames
 
 # URL for the taxonomy dump
 const ncbi_ftp = "https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/"
@@ -38,4 +39,31 @@ else
     end
 end
 
-# Reads the taxonomy dumps and convert them to arrow files
+@info "Materializing the taxonomy"
+
+# This is the separator used for fields in all the files
+const ncbi_dump_separator = r"\t\|\t?"
+tables = joinpath(@__DIR__, "tables")
+ispath(tables) || mkpath(tables)
+
+# Paths of the actual files
+ncbi_names_file = joinpath(@__DIR__, "dump", "names.dmp")
+
+# Get the data
+@info "Building the names file"
+ncbi_names = DataFrames.DataFrame(tax_id=Int[], name=Symbol[], unique_name=Union{Symbol,Missing}[], class=Symbol[])
+names_columns_types = [eltype(ncbi_names[n]) for n in names(ncbi_names)]
+for names_line in readlines(ncbi_names_file)
+    t = String.(split(names_line, ncbi_dump_separator)[1:(end-1)])
+    r = Vector{Any}(undef, length(t))
+    for (i,e) in enumerate(t)
+        r[i] = missing
+        if e != ""
+            T = names_columns_types[i]
+            T <: Number && (r[i] = parse(T, e))
+            T <: Symbol && (r[i] = Symbol(e))
+        end
+    end
+    push!(ncbi_names, tuple(r...))
+end
+Arrow.write(joinpath(tables, "names.arrow"), ncbi_names)
