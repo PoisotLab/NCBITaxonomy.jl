@@ -58,7 +58,7 @@ function _materialize_data(::Type{T}, v) where {T}
     if v != ""
         T <: Number && return parse(T, v)
         T <: Symbol && return Symbol(v)
-        return missing
+        return v
     else
         return missing
     end
@@ -83,5 +83,5 @@ end
 @info "Building the names file"
 ncbi_names_file_in = joinpath(@__DIR__, "dump", "names.dmp")
 ncbi_names_file_out = joinpath(@__DIR__, "tables", "names.arrow")
-ncbi_names = DataFrames.DataFrame(tax_id=Int[], name=Symbol[], unique_name=Union{Symbol,Missing}[], class=Symbol[])
+ncbi_names = DataFrames.DataFrame(tax_id=Int[], name=String[], unique_name=Union{String,Missing}[], class=Symbol[])
 _build_arrow_file(ncbi_names, ncbi_names_file_in, ncbi_names_file_out)
