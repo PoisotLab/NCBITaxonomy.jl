@@ -107,7 +107,7 @@ _build_arrow_file(ncbi_division, ncbi_division_file_in, ncbi_division_file_out)
 ncbi_nodes_file_in = joinpath(@__DIR__, "dump", "nodes.dmp")
 ncbi_nodes_file_out = joinpath(@__DIR__, "tables", "nodes.arrow")
 ncbi_nodes = DataFrames.DataFrame(
-    tax_id_id=Int[], parent_tax_id=Int[],
+    tax_id=Int[], parent_tax_id=Int[],
     rank=Symbol[],
     embl=Union{String,Missing}[],
     division_id=Int[], inherited_div = Union{Bool,Missing}[],

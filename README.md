@@ -32,4 +32,6 @@ the version on disk, to avoid downloading data for nothing.
 
 Internally, the data are saved as arrow tables, which are loaded by
 `NCBITaxonomy` as `DataFrames`. These data frames are *not* exported, but they
-are used by the various function of the package.
+are used by the various function of the package. Note also that a number of
+fields are removed, and some tables are pre-merged - not at build time (so there
+is no information loss), but at load time.
