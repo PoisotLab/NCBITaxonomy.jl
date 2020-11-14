@@ -9,6 +9,14 @@ build the package again.
 
 [ncbitax]: https://www.ncbi.nlm.nih.gov/taxonomy
 
+This package is developed as part of the activities of the Viral Emergence
+Research Initiative ([VERENA][verena]) consortium, with financial support from
+the Institut de Valorisation des Données ([IVADO][ivado]) at Université de
+Montréal.
+
+[verena]: https://www.viralemergence.org/
+[ivado]: https://ivado.ca/en/
+
 ## How to use
 
 ## Varia
