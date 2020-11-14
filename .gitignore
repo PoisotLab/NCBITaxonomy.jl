@@ -2,4 +2,7 @@
 Manifest.toml
 
 # No raw database files
-deps/taxonomy
+deps/dump
+deps/tables
+deps/.checksum
+deps/build.log
