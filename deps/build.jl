@@ -99,13 +99,13 @@ _build_arrow_file(ncbi_names, ncbi_names_file_in, ncbi_names_file_out)
 
 @info "Building the division file"
 ncbi_division_file_in = joinpath(@__DIR__, "dump", "division.dmp")
-ncbi_division_file_out = joinpath(@__DIR__, "dump", "division.arrow")
+ncbi_division_file_out = joinpath(@__DIR__, "tables", "division.arrow")
 ncbi_division = DataFrames.DataFrame(division_id=Int[], code=Symbol[], division_name=Symbol[], comments=Union{String,Missing}[])
 _build_arrow_file(ncbi_division, ncbi_division_file_in, ncbi_division_file_out)
 
 @info "Building the nodes file"
 ncbi_nodes_file_in = joinpath(@__DIR__, "dump", "nodes.dmp")
-ncbi_nodes_file_out = joinpath(@__DIR__, "dump", "nodes.arrow")
+ncbi_nodes_file_out = joinpath(@__DIR__, "tables", "nodes.arrow")
 ncbi_nodes = DataFrames.DataFrame(
     tax_id_id=Int[], parent_tax_id=Int[],
     rank=Symbol[],
