@@ -17,5 +17,11 @@ Internally, the package relies on the files provided by NCBI to reconstruct the
 taxonomy -- the README for what the files contain can be found [here][readme].
 Note that the files *and* their expected MD5 checksum are downloaded when the
 package is built, and the data are *not* extracted unless the checksum matches.
+The package will also check that the checksum on the server is different from
+the version on disk, to avoid downloading data for nothing.
 
 [readme]: https://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/taxdump_readme.txt
+
+Internally, the data are saved as arrow tables, which are loaded by
+`NCBITaxonomy` as `DataFrames`. These data frames are *not* exported, but they
+are used by the various function of the package.
