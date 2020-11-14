@@ -1,4 +1,4 @@
-using NCBI
+using NCBITaxonomy
 using Test
 
 my_tests = [
