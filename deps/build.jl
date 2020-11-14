@@ -52,28 +52,36 @@ const ncbi_dump_separator = r"\t\|\t?"
 tables = joinpath(@__DIR__, "tables")
 ispath(tables) || mkpath(tables)
 
-# Paths of the actual files
-ncbi_names_file = joinpath(@__DIR__, "dump", "names.dmp")
+# Utility functions
 
-function _materialize_data(::Type{T}, v) where {T <: Type}
+function _materialize_data(::Type{T}, v) where {T}
     if v != ""
         T <: Number && return parse(T, v)
         T <: Symbol && return Symbol(v)
+        return missing
     else
         return missing
     end
 end
 
+function _build_arrow_file(df, dump_file, arrow_file)
+    names_columns_types = [eltype(df[n]) for n in names(df)]
+    for names_line in readlines(dump_file)
+        t = String.(split(names_line, ncbi_dump_separator)[1:(end-1)])
+        r = Vector{Any}(undef, length(t))
+        for (i,e) in enumerate(t)
+            r[i] = _materialize_data(names_columns_types[i], e)
+        end
+        push!(df, tuple(r...))
+    end
+    Arrow.write(joinpath(tables, arrow_file), df)
+    df = nothing
+    GC.gc()
+end
+
 # Get the data
 @info "Building the names file"
+ncbi_names_file_in = joinpath(@__DIR__, "dump", "names.dmp")
+ncbi_names_file_out = joinpath(@__DIR__, "tables", "names.arrow")
 ncbi_names = DataFrames.DataFrame(tax_id=Int[], name=Symbol[], unique_name=Union{Symbol,Missing}[], class=Symbol[])
-names_columns_types = [eltype(ncbi_names[n]) for n in names(ncbi_names)]
-for names_line in readlines(ncbi_names_file)
-    t = String.(split(names_line, ncbi_dump_separator)[1:(end-1)])
-    r = Vector{Any}(undef, length(t))
-    for (i,e) in enumerate(t)
-        r[i] = _materialize_data(names_columns_types[i], r)
-    end
-    push!(ncbi_names, tuple(r...))
-end
-Arrow.write(joinpath(tables, "names.arrow"), ncbi_names)
+_build_arrow_file(ncbi_names, ncbi_names_file_in, ncbi_names_file_out)
