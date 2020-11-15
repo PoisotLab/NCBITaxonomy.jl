@@ -23,7 +23,7 @@ end
 function _taxa_from_id(id::Vector{T}) where {T <: Int}
     valid_names_rows = findall(vec(any(NCBITaxonomy.names_table.tax_id .∈ id'; dims=2)))
     nms = @where(NCBITaxonomy.names_table[valid_names_rows,:], :class .== Symbol("scientific name"))
-    return [NCBITaxon(r.name, r.tax_id, r.class) for r in eachrow(nms)]
+    return [NCBITaxon(r.name, r.tax_id) for r in eachrow(nms)]
 end
 
 function children(t::NCBITaxon)
