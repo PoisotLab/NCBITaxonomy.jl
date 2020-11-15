@@ -42,18 +42,18 @@ julia> taxid("cow")
 Bos taurus (9913)
 ```
 
-You can pass an additional `:fuzzy` argument to the `taxid` function to perform
-fuzzy name matching using the Levenshtein distance:
+You can pass an additional `fuzzy=true` keyword argument to the `taxid` function
+to perform fuzzy name matching using the Levenshtein distance:
 
 ```julia
-julia> taxid("Paradiplozon homion", :fuzzy)
+julia> taxid("Paradiplozon homion", fuzzy=true)
 Paradiplozoon homoion (147838)
 ```
 
 Note that both fuzzy searching and non-standard naming come at a performance cost:
 
 ```julia
-julia> @time taxid("tchiken", :fuzzy)
+julia> @time taxid("tchiken", fuzzy=true)
   0.629431 seconds (15.88 M allocations: 438.590 MiB, 6.48% gc time)
 Gallus gallus (9031)
 
@@ -81,8 +81,8 @@ julia> taxid("Diplectanidae") |> descendants
 126-element Array{NCBITaxon,1}:
 ```
 
- Note that for the moment, these functions are not optimized. They will be, but
- right now, they are not.
+Note that for the moment, these functions are not optimized. They will be, but
+right now, they are not.
 
 ## Varia
 
@@ -95,8 +95,10 @@ the version on disk, to avoid downloading data for nothing.
 
 [readme]: https://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/taxdump_readme.txt
 
-Internally, the data are saved as arrow tables, which are loaded by
-`NCBITaxonomy` as `DataFrames`. These data frames are *not* exported, but they
-are used by the various function of the package. Note also that a number of
-fields are removed, and some tables are pre-merged - not at build time (so there
-is no information loss), but at load time.
+The data are saved as arrow tables when the package is built, and these are
+loaded when the package is loaded with `import` or `using`, as `DataFrames`.
+These data frames are *not* exported, but they are used by the various function
+of the package. Note also that a number of fields are removed, and some tables
+are pre-merged - not at build time (so there is no information loss, and you are
+welcome to dig into the full data frame by reloading the arrow file), but at
+load time.
