@@ -19,6 +19,43 @@ Montréal.
 
 ## How to use
 
+### Get the taxonomic ID of a node
+
+The `taxid` function will return a `Pair` made of a name and the taxonomic ID.
+
+```julia
+julia> taxid("Bos taurus")
+"Bos taurus" => 9913
+```
+
+Note that because the names database contains vernacular and deprecated names,
+the *scientific name* will be returned, no matter what you search
+
+```julia
+julia> taxid("cow")
+"Bos taurus" => 9913
+```
+
+You can pass an additional `:fuzzy` argument to the `taxid` function to perform
+fuzzy name matching using the Levenshtein distance:
+
+```julia
+julia> taxid("Paradiplozon homion", :fuzzy)
+"Paradiplozoon homoion" => 147838
+```
+
+Note that both fuzzy searching and non-standard naming come at a performance cost:
+
+```julia
+julia> @time taxid("tchiken", :fuzzy)
+  0.607119 seconds (15.88 M allocations: 438.565 MiB, 10.69% gc time)
+"Gallus gallus" => 9031
+
+julia> @time taxid("Gallus gallus")
+  0.091540 seconds (3.16 M allocations: 158.590 MiB)
+"Gallus gallus" => 9031
+```
+
 ## Varia
 
 Internally, the package relies on the files provided by NCBI to reconstruct the
