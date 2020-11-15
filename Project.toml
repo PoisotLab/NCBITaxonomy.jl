@@ -12,4 +12,5 @@ StringDistances = "88034a9c-02f8-509d-84a9-84ec65e18404"
 Tar = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 
 [compat]
+MD5 = "0.2"
 julia = "1.3"
