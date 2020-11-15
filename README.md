@@ -62,6 +62,55 @@ julia> @time taxid("Gallus gallus")
 Gallus gallus (9031)
 ```
 
+### Working with namefinders
+
+The `namefinder` function has one job: generating a function that works exactly
+like `taxid`, but only searches on a smaller subset of the data. In fact,
+`taxid` is a special case of `namefinder`, which simply searches the whole
+database. At the moment, there is no convenient wrapper to generate namefinders,
+but there will soon be a few (using the `children` and `descendants` functions
+explained below).
+
+Here is an illustration of why using namefinders makes sense. Let's say we have
+to search for a potentially misspelled name:
+
+```julia
+julia> @time taxid("Evolavirus"; fuzzy=true)
+  0.382734 seconds (12.76 M allocations: 348.658 MiB, 6.03% gc time)
+Ebolavirus (186536)
+```
+
+We can build a more efficient namefinder by selecting the nodes in the taxonomy
+that belong to the `VRL` division. Doing so requires to call `namefinder` on a
+`DataFrame`. Note that we are doing some merging here, which results in the data
+frame we use having more columns than the names data frame -- but this does not
+matter, because the `namefinder` is not picky about having *too much*
+information.
+
+```julia
+julia> viralfinder = namefinder(
+         join(
+           @where(
+               select(NCBITaxonomy.nodes_table, [:tax_id, :division_code]),
+               :division_code .== Symbol("VRL")
+           ),
+           NCBITaxonomy.names_table;
+           on = :tax_id
+         )
+       )
+(::var"#_inner_finder#9"{var"#_inner_finder#8#10"{DataFrame}}) (generic function with 1 method)
+```
+
+Is it worth it?
+
+```julia
+julia> @time viralfinder("Evolavirus"; fuzzy=true)
+  0.028657 seconds (631.35 k allocations: 11.617 MiB)
+Ebolavirus (186536)
+```
+
+This is almost 10 times faster than the solution using `taxid`.
+
 ### Get the children and descendants of a node
 
 The `children` function returns all nodes immediately *below* the node of
