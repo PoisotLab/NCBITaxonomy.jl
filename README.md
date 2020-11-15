@@ -6,6 +6,8 @@
 
 ![Documentation](https://github.com/EcoJulia/NCBITaxonomy.jl/workflows/Documentation/badge.svg)
 
+[![codecov](https://codecov.io/gh/EcoJulia/NCBITaxonomy.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/EcoJulia/NCBITaxonomy.jl)
+
 This package provides an interface to the [NCBI Taxonomy][ncbitax]. When
 installed, it will download the *latest* version of the taxonomy files from the
 NCBI `ftp` service. To update the version of the taxonomy you use, you need to
