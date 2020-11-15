@@ -8,9 +8,9 @@ function taxid(name::T) where {T <: String}
     first_index = findfirst(f.(NCBITaxonomy.names_table.name))
     row = NCBITaxonomy.names_table[first_index,:]
     if row.class == Symbol("scientific name")
-        return row.name => row.tax_id
+        return NCBITaxon(row.name, row.tax_id)
     else
-        return _get_sciname_from_taxid(row.tax_id) => row.tax_id 
+        return NCBITaxon(_get_sciname_from_taxid(row.tax_id), row.tax_id)
     end
 end
 
@@ -24,9 +24,9 @@ function taxid(name::T, ::Val{:fuzzy}) where {T <: String}
     correct_name, position = findnearest(name, NCBITaxonomy.names_table.name, Levenshtein())
     row = NCBITaxonomy.names_table[position,:]
     if row.class == Symbol("scientific name")
-        return row.name => row.tax_id
+        return NCBITaxon(row.name, row.tax_id)
     else
-        return _get_sciname_from_taxid(row.tax_id) => row.tax_id
+        return NCBITaxon(_get_sciname_from_taxid(row.tax_id), row.tax_id)
     end
 end
 

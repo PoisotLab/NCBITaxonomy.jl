@@ -25,9 +25,12 @@ struct NCBITaxon
     id::Int
 end
 
+Base.show(io::IO, t::NCBITaxon) = println("$(t.name) ($(t.id))")
+
 export NCBITaxon
-Base.convert(::Type{Pair}, t::NCBITaxon) = t.name => t.id
-Base.convert(::Type{NCBITaxon}, p::T) where {T <: Pair{String,Int}} = NCBITaxon(p.first, p.second)
+
+include("children.jl")
+export children, descendants
 
 include("taxid.jl")
 export taxid
