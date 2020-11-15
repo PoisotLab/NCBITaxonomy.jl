@@ -1,5 +1,6 @@
 module NCBITaxonomy
 using DataFrames
+using DataFramesMeta
 using Arrow
 using StringDistances
 
@@ -18,6 +19,21 @@ select!(nodes_table, Not(:embl))
 
 nodes_table = join(nodes_table, division_table; on=:division_id)
 select!(nodes_table, Not(:division_id))
+
+struct NCBITaxon
+    name::String
+    id::Int
+end
+
+Base.show(io::IO, t::NCBITaxon) = println("$(t.name) ($(t.id))")
+
+export NCBITaxon
+
+include("children.jl")
+export children, descendants
+
+include("taxid.jl")
+export taxid
 
 include("string_macro.jl")
 export @ncbi_str
