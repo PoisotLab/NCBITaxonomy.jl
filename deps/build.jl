@@ -77,9 +77,9 @@ end
 function _build_arrow_file(df, dump_file, arrow_file)
     names_columns_types = [eltype(df[n]) for n in names(df)]
     for names_line in readlines(dump_file)
-        t = String.(split(names_line, r"\t\|\t?")[1:(end-1)])
+        t = String.(split(names_line, r"\t\|\t?")[1:(end - 1)])
         r = Vector{Any}(undef, length(t))
-        for (i,e) in enumerate(t)
+        for (i, e) in enumerate(t)
             r[i] = _materialize_data(names_columns_types[i], e)
         end
         push!(df, tuple(r...))
@@ -110,14 +110,14 @@ ncbi_nodes = DataFrames.DataFrame(
     tax_id=Int[], parent_tax_id=Int[],
     rank=Symbol[],
     embl=Union{String,Missing}[],
-    division_id=Int[], inherited_div = Union{Bool,Missing}[],
-    genetic_code_id = Int[], inherited_gc = Union{Bool,Missing}[], 
-    mitochondrial_genetic_code_id = Union{Int,Missing}[], inherited_mgc = Union{Bool,Missing}[],
-    genbank_hidden = Union{Bool,Missing}[],
-    hidden_subtree = Union{Bool,Missing}[],
-    comments = Union{String,Missing}[],
-    plastid_genetic_code_id = Union{Int,Missing}[], inherited_pgc = Union{Bool,Missing}[],
-    specified_species = Union{Bool,Missing}[],
-    hydrogenosome_code_id = Union{Int,Missing}[], inherited_hgc = Union{Bool,Missing}[]
+    division_id=Int[], inherited_div=Union{Bool,Missing}[],
+    genetic_code_id=Int[], inherited_gc=Union{Bool,Missing}[], 
+    mitochondrial_genetic_code_id=Union{Int,Missing}[], inherited_mgc=Union{Bool,Missing}[],
+    genbank_hidden=Union{Bool,Missing}[],
+    hidden_subtree=Union{Bool,Missing}[],
+    comments=Union{String,Missing}[],
+    plastid_genetic_code_id=Union{Int,Missing}[], inherited_pgc=Union{Bool,Missing}[],
+    specified_species=Union{Bool,Missing}[],
+    hydrogenosome_code_id=Union{Int,Missing}[], inherited_hgc=Union{Bool,Missing}[]
     )
 _build_arrow_file(ncbi_nodes, ncbi_nodes_file_in, ncbi_nodes_file_out)
