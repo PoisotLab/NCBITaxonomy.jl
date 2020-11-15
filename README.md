@@ -19,6 +19,67 @@ Montréal.
 
 ## How to use
 
+### Get the taxonomic ID of a node
+
+The `taxid` function will return a `NCBITaxon` object, which has two fields:
+`name` and `id`. We do not return the `class` attribute, because the package
+will always return the scientific name, as the examples below illustrate:
+
+```julia
+julia> taxid("Bos taurus")
+Bos taurus (9913)
+```
+
+Note that because the names database contains vernacular and deprecated names,
+the *scientific name* will be returned, no matter what you search
+
+```julia
+julia> taxid("cow")
+Bos taurus (9913)
+```
+
+You can pass an additional `:fuzzy` argument to the `taxid` function to perform
+fuzzy name matching using the Levenshtein distance:
+
+```julia
+julia> taxid("Paradiplozon homion", :fuzzy)
+Paradiplozoon homoion (147838)
+```
+
+Note that both fuzzy searching and non-standard naming come at a performance cost:
+
+```julia
+julia> @time taxid("tchiken", :fuzzy)
+  0.629431 seconds (15.88 M allocations: 438.590 MiB, 6.48% gc time)
+Gallus gallus (9031)
+
+julia> @time taxid("Gallus gallus")
+  0.103331 seconds (3.16 M allocations: 158.598 MiB)
+Gallus gallus (9031)
+```
+
+### Get the children and descendants of a node
+
+The `children` function returns all nodes immediately *below* the node of
+reference.
+
+```julia
+julia> taxid("Diplectanidae") |> children
+22-element Array{NCBITaxon,1}:
+```
+
+The `descendants` functions *recursively* returns all nodes below the reference
+one, until the tips of the taxonomy are reached. Note that this might include
+unidentified or environmental samples.
+
+```julia
+julia> taxid("Diplectanidae") |> descendants
+126-element Array{NCBITaxon,1}:
+```
+
+ Note that for the moment, these functions are not optimized. They will be, but
+ right now, they are not.
+
 ## Varia
 
 Internally, the package relies on the files provided by NCBI to reconstruct the
