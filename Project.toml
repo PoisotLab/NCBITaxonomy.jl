@@ -14,7 +14,9 @@ Tar = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 
 [compat]
 Arrow = "0.4"
+DataFrames = "0.21"
 GZip = "0.5"
 MD5 = "0.2"
 StringDistances = "0.10"
+Tar = "1.8"
 julia = "1.3"
