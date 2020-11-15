@@ -2,7 +2,7 @@ using NCBITaxonomy
 using Test
 
 my_tests = [
-   "_test.jl",
+   "taxid.jl",
 ]
 
 global test_n
