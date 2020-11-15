@@ -20,6 +20,15 @@ select!(nodes_table, Not(:embl))
 nodes_table = join(nodes_table, division_table; on=:division_id)
 select!(nodes_table, Not(:division_id))
 
+struct NCBITaxon
+    name::String
+    id::Int
+end
+
+export NCBITaxon
+Base.convert(::Type{Pair}, t::NCBITaxon) = t.name => t.id
+Base.convert(::Type{NCBITaxon}, p::T) where {T <: Pair{String,Int}} = NCBITaxon(p.first, p.second)
+
 include("taxid.jl")
 export taxid
 
