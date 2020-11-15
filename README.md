@@ -1,6 +1,10 @@
 # NCBI taxonomy
 
-[![Project Status: Concept – Minimal or no implementation has been done yet, or the repository is only intended to be a limited example, demo, or proof-of-concept.](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
+![Proof of concept](https://img.shields.io/badge/status-proof%20of%20concept-lightgrey)
+
+![CI](https://github.com/EcoJulia/NCBITaxonomy.jl/workflows/CI/badge.svg)
+
+![Documentation](https://github.com/EcoJulia/NCBITaxonomy.jl/workflows/Documentation/badge.svg)
 
 This package provides an interface to the [NCBI Taxonomy][ncbitax]. When
 installed, it will download the *latest* version of the taxonomy files from the
