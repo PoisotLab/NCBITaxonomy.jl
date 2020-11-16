@@ -35,6 +35,9 @@ export children, descendants
 include("taxid.jl")
 export taxid, namefinder, descendantsfinder
 
+include("lineage.jl")
+export lineage
+
 include("string_macro.jl")
 export @ncbi_str
 

@@ -1,5 +1,11 @@
 # Navigating lineages
 
+```@docs
+lineage
+children
+descendants
+```
+
 The `children` function returns all nodes immediately *below* the node of
 reference.
 

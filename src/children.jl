@@ -26,11 +26,17 @@ function _taxa_from_id(id::Vector{T}) where {T <: Int}
     return [NCBITaxon(r.name, r.tax_id) for r in eachrow(nms)]
 end
 
+"""
+TODO
+"""
 function children(t::NCBITaxon)
     c = _children_nodes(t.id)
     return _taxa_from_id(c)
 end
 
+"""
+TODO
+"""
 function descendants(t::NCBITaxon)
     c = _descendant_nodes(t.id)
     return _taxa_from_id(c)
