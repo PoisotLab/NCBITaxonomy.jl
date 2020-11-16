@@ -8,6 +8,6 @@ module TestNamefinders
     lam = dipl("Lamellodiscus elegans")
 
     @test typeof(lam) == NCBITaxon
-    @test lam.name = "Lamellodiscus elegans"
+    @test lam.name == "Lamellodiscus elegans"
 
 end
