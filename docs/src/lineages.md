@@ -1,28 +1,42 @@
 # Navigating lineages
 
+## Core functions
+
 ```@docs
 lineage
 children
 descendants
 ```
 
-The `children` function returns all nodes immediately *below* the node of
-reference.
+## Examples
 
-```julia
-julia> taxid("Diplectanidae") |> children
-22-element Array{NCBITaxon,1}:
+The `children` function will return a list of `NCBITaxon` that are immediately
+descending from the one given as argument. For example, the genus
+*Lamellodiscus* contains:
+
+```@example lineages
+using NCBITaxonomy
+
+ncbi"Lamellodiscus" |> children
 ```
 
-The `descendants` functions *recursively* returns all nodes below the reference
-one, until the tips of the taxonomy are reached. Note that this might include
-unidentified or environmental samples.
+To get the full descendants of a taxon (*i.e.* the children of its children, recursively), we can do:
 
-```julia
-julia> taxid("Diplectanidae") |> descendants
-126-element Array{NCBITaxon,1}:
+```@example lineages
+descendants(ncbi"Diplectanidae")
 ```
 
-Note that for the moment, these functions are not optimized. They will be, but
-right now, they are not.
+We can also work upwards in the taxonomy, using the `lineage` function -- it
+takes an optional `stop_at` argument, which is the farther up it will go:
 
+```@example lineages
+lineage(ncbi"Lamellodiscus elegans"; stop_at=ncbi"Monogenea")
+```
+
+## Internal functions
+
+```@docs
+NCBITaxonomy._descendant_nodes
+NCBITaxonomy._taxa_from_id
+NCBITaxonomy._children_nodes
+```
