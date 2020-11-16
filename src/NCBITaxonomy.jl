@@ -28,16 +28,17 @@ Base.show(io::IO, t::NCBITaxon) = print(io, "$(t.name) ($(t.id))")
 
 export NCBITaxon
 
-include("children.jl")
-export children, descendants
-
 include("taxid.jl")
 export taxid, namefinder, descendantsfinder
+
+include("string_macro.jl")
+export @ncbi_str
+
+include("children.jl")
+export children, descendants
 
 include("lineage.jl")
 export lineage
 
-include("string_macro.jl")
-export @ncbi_str
 
 end
