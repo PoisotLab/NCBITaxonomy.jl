@@ -59,13 +59,25 @@ a custom version.
 """
 taxid = namefinder(NCBITaxonomy.names_table)
 
+"""
+    _df_from_taxlist(tax::Vector{NCBITaxon})
+
+Returns a subset of the names dataframe based on a vector of taxa.
+"""
 function _df_from_taxlist(tax::Vector{NCBITaxon})
     ids = [t.id for t in tax]
     positions = findall(vec(any(NCBITaxonomy.names_table.tax_id .== permutedims(ids); dims=2)))
     return NCBITaxonomy.names_table[positions, :]
 end
 
-function descendantsearch(t::NCBITaxon)
+"""
+    descendantsfinder(t::NCBITaxon)
+
+Returns a `namefinder` for all taxa below the one given as argument. This
+function calls `descendants` internally, so it might not be the optimal way when
+dealing with large groups.
+"""
+function descendantsfinder(t::NCBITaxon)
     d = descendants(t)
     df = _df_from_taxlist(d)
     return namefinder(df)

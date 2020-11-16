@@ -15,6 +15,12 @@ using NCBITaxonomy
 taxid("Bos taurus")
 ```
 
+There is a convenience string macro to replace the `taxid` function:
+
+```@example taxid
+ncbi"Bos taurus"
+```
+
 Note that because the names database contains vernacular and deprecated names,
 the *scientific name* will be returned, no matter what you search
 
@@ -37,10 +43,11 @@ cost, so it is preferable to use the strict matching unless necessary.
 The `namefinder` function has one job: generating a function that works exactly
 like `taxid`, but only searches on a smaller subset of the data. In fact,
 `taxid` is a special case of `namefinder`, which simply searches the whole
-database. At the moment, there is no convenient wrapper to generate namefinders.
+database.
 
 ```@docs
 namefinder
+descendantsfinder
 ```
 
 Here is an illustration of why using namefinders makes sense. Let's say we have
@@ -70,11 +77,20 @@ viralfinder = namefinder(
          )
        )
 
-@time viralfinder("Evolavirus"; fuzzy=true)
+@time viralfinder("Evolavirus"; fuzzy=true);
+```
+
+For searches in specific groups, the `descendantsfinder` is a convenient
+wrapper: it will return a `namefinder` limited to all taxa below its argument.
+
+```@example taxid
+diplectanidfinder = descendantsfinder(taxid("Diplectanidae"))
+diplectanidfinder("Lamellodiscus")
 ```
 
 ## Internal functions
 
 ```@docs
 NCBITaxonomy._get_sciname_from_taxid
+NCBITaxonomy._df_from_taxlist
 ```
