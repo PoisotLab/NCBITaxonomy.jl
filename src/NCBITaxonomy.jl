@@ -1,6 +1,5 @@
 module NCBITaxonomy
 using DataFrames
-using DataFramesMeta
 using Arrow
 using StringDistances
 
