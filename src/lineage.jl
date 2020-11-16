@@ -6,6 +6,9 @@ function _parent_of(tax::NCBITaxon)
     return NCBITaxon(name, id)
 end
 
+"""
+TODO
+"""
 function lineage(tax::NCBITaxon; stop_at::NCBITaxon=ncbi"root")
     lin = [tax]
     while last(lin) != stop_at
