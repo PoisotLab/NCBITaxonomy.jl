@@ -1,3 +1,8 @@
+"""
+    _parent_of(tax::NCBITaxon)
+
+Returns the taxon from which the argument is descended.
+"""
 function _parent_of(tax::NCBITaxon)
     position = findfirst(NCBITaxonomy.nodes_table.tax_id .== tax.id)
     id = NCBITaxonomy.nodes_table.parent_tax_id[position]
@@ -7,7 +12,10 @@ function _parent_of(tax::NCBITaxon)
 end
 
 """
-TODO
+    lineage(tax::NCBITaxon; stop_at::NCBITaxon=ncbi"root")
+
+Returns an array of `NCBITaxon` going up to the root of the taxonomy, or to the
+optionally specified `stop_at` taxonomic node.
 """
 function lineage(tax::NCBITaxon; stop_at::NCBITaxon=ncbi"root")
     lin = [tax]
