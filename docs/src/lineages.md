@@ -39,5 +39,5 @@ lineage(ncbi"Lamellodiscus elegans"; stop_at=ncbi"Monogenea")
 NCBITaxonomy._descendant_nodes
 NCBITaxonomy._taxa_from_id
 NCBITaxonomy._children_nodes
-NCBI._parent_of
+NCBITaxonomy._parent_of
 ```
