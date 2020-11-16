@@ -33,7 +33,7 @@ include("children.jl")
 export children, descendants
 
 include("taxid.jl")
-export taxid
+export taxid, namefinder
 
 include("string_macro.jl")
 export @ncbi_str

@@ -76,5 +76,5 @@ viralfinder = namefinder(
 ## Internal functions
 
 ```@docs
-_get_sciname_from_taxid
+NCBITaxonomy._get_sciname_from_taxid
 ```
