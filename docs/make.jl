@@ -6,7 +6,8 @@ makedocs(
     modules=[NCBITaxonomy],
     pages=[
         "Index" => "index.md",
-        "Finding taxa" => "namefinding.md"
+        "Finding taxa" => "namefinding.md",
+        "Navigating lineages" => "lineages.md"
         ]
 )
 
