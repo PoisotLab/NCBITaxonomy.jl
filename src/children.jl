@@ -3,10 +3,6 @@ function _children_nodes(id::T) where {T <: Int}
     return NCBITaxonomy.nodes_table.tax_id[positions]
 end
 
-function _children_nodes(id::Vector{T}) where {T <: Int}
-    return vcat(_children_nodes.(id)...)
-end
-
 function _descendant_nodes(id::Vector{T}) where {T <: Int}
     return(filter(!isnothing, vcat(_descendant_nodes.(id)...)))
 end
