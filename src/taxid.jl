@@ -14,7 +14,9 @@ Generates a name-finding function that takes a string as an argument, and a
 boolean (`fuzzy`) as a keyword argument to switch from strict to fuzzy matching.
 The generated function will return a `NCBITaxon` for a given string. By default,
 the function `taxid` is working on the entire names table, which is going to be
-slow if there are many names to fuzzy match.
+slow if there are many names to fuzzy match. The keyword argument `verbose`
+(default to `false`) indicates whether the distance to a fuzzy match must be
+printed.
 
 Under strict matching, if no match is found, the namefinder will return
 `nothing`. This can be used to switch to the fuzzy namefinder automatically. The
@@ -27,11 +29,13 @@ Altough the input dataframe is supposed to be a subset of the (unexported)
 and `class`. Make of that information what you wish...
 """
 function namefinder(df::T) where {T <: DataFrame}
-    function _inner_finder(name::K; fuzzy::Bool=false) where {K <: String}
+    function _inner_finder(name::K; fuzzy::Bool=false, verbose::Bool=false) where {K <: String}
         if fuzzy
             correct_name, position = findnearest(name, df.name, Levenshtein())
-            names_dist = compare(name, correct_name, Levenshtein())
-            @info "$(name) matched as $(correct_name) - distance: $(names_dist)"
+            if verbose
+                names_dist = compare(name, correct_name, Levenshtein())
+                @info "$(name) matched as $(correct_name) - distance: $(names_dist)"
+            end
         else
             position = findfirst(isequal(name).(df.name))
         end
