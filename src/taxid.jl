@@ -4,7 +4,10 @@
 This internal function will return a scientific name from a numerical `id`.
 """
 function _get_sciname_from_taxid(df::T, id::Int) where {T <: DataFrame}
-    return first(@where(df, :tax_id .== id, :class .== Symbol("scientific name")).name)
+    ok_taxid = findall(df.tax_id .== id)
+    tdf = df[ok_taxid,:]
+    scientific_names = findall(tdf.class .== Symbol("scientific name"))
+    return first(tdf[scientific_names,:].name)
 end
 
 """
