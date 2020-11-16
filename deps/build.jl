@@ -75,7 +75,7 @@ function _materialize_data(::Type{T}, v) where {T}
 end
 
 function _build_arrow_file(df, dump_file, arrow_file)
-    names_columns_types = [eltype(df[Symbol(n)]) for n in names(df)]
+    names_columns_types = [eltype(col) for col in eachcol(df)]
     for names_line in readlines(dump_file)
         t = String.(split(names_line, r"\t\|\t?")[1:(end - 1)])
         r = Vector{Any}(undef, length(t))
