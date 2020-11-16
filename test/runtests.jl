@@ -3,6 +3,7 @@ using Test
 
 my_tests = [
    "taxid.jl",
+   "lineages.jl"
 ]
 
 global test_n
