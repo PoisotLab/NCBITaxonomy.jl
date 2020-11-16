@@ -58,3 +58,15 @@ using fuzzy matching. We encourage the use of the `namefinder` function to build
 a custom version.
 """
 taxid = namefinder(NCBITaxonomy.names_table)
+
+function _df_from_taxlist(tax::Vector{NCBITaxon})
+    ids = [t.id for t in tax]
+    positions = findall(vec(any(NCBITaxonomy.names_table.tax_id .== permutedims(ids); dims=2)))
+    return NCBITaxonomy.names_table[positions, :]
+end
+
+function descendantsearch(t::NCBITaxon)
+    d = descendants(t)
+    df = _df_from_taxlist(d)
+    return namefinder(df)
+end
