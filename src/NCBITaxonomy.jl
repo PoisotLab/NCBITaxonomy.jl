@@ -25,7 +25,7 @@ struct NCBITaxon
     id::Int
 end
 
-Base.show(io::IO, t::NCBITaxon) = println("$(t.name) ($(t.id))")
+Base.show(io::IO, t::NCBITaxon) = print(io, "$(t.name) ($(t.id))")
 
 export NCBITaxon
 
