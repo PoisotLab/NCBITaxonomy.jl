@@ -4,7 +4,11 @@ makedocs(
     sitename="NCBITaxonomy",
     authors="Timothée Poisot",
     modules=[NCBITaxonomy],
-    pages=["Index" => "index.md"]
+    pages=[
+        "Index" => "index.md",
+        "Finding taxa" => "namefinding.md",
+        "Navigating lineages" => "lineages.md"
+        ]
 )
 
 deploydocs(

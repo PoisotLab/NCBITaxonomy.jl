@@ -1,6 +1,5 @@
 module NCBITaxonomy
 using DataFrames
-using DataFramesMeta
 using Arrow
 using StringDistances
 
@@ -25,17 +24,21 @@ struct NCBITaxon
     id::Int
 end
 
-Base.show(io::IO, t::NCBITaxon) = println("$(t.name) ($(t.id))")
+Base.show(io::IO, t::NCBITaxon) = print(io, "$(t.name) ($(t.id))")
 
 export NCBITaxon
+
+include("taxid.jl")
+export taxid, namefinder, descendantsfinder
+
+include("string_macro.jl")
+export @ncbi_str
 
 include("children.jl")
 export children, descendants
 
-include("taxid.jl")
-export taxid
+include("lineage.jl")
+export lineage
 
-include("string_macro.jl")
-export @ncbi_str
 
 end

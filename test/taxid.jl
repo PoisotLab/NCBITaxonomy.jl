@@ -20,5 +20,8 @@ module TestTaxid
     @test box.name == "Bos taurus"
     @test box.id == 9913
 
+    # A species that doesn't exist returns nothing
+    fake = taxid("Notus existingensis") # Sweet lord
+    @test isnothing(fake)
 
 end

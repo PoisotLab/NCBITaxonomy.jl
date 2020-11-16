@@ -1,3 +1,8 @@
+"""
+    ncbi_str(s)
+
+A string macro to perform a strict taxonomic search.
+"""
 macro ncbi_str(s)
-    return NCBITaxonomy.names_table[findfirst(isequal(Symbol(s)), NCBITaxonomy.names_table.name),:]
+    return taxid(s)
 end
