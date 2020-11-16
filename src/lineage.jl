@@ -10,7 +10,6 @@ function lineage(tax::NCBITaxon; stop_at::NCBITaxon=ncbi"root")
     lin = [tax]
     while last(lin) != stop_at
         push!(lin, _parent_of(last(lin)))
-        @info lin
     end
     return reverse(lin)
 end
