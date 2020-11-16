@@ -24,4 +24,8 @@ module TestTaxid
     fake = taxid("Notus existingensis") # Sweet lord
     @test isnothing(fake)
 
+    # Verbose fuzzy matching
+    chicken = taxid("tchiken"; fuzzy=true, verbose=true)
+    @test typeof(chicken) == NCBITaxon
+
 end
