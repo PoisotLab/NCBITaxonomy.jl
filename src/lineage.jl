@@ -3,7 +3,7 @@
 
 Returns the taxon from which the argument is descended.
 """
-function parent(taxon::NCBITaxon)
+function Base.parent(taxon::NCBITaxon)
     position = findfirst(isequal(taxon.id), NCBITaxonomy.nodes_table.tax_id)
     id = NCBITaxonomy.nodes_table.parent_tax_id[position]
     isnothing(id) && return nothing
@@ -13,6 +13,8 @@ end
 
 """
     rank(taxon::NCBITaxon)
+
+Returns the rank of a taxon.
 """
 function rank(taxon::NCBITaxon)
     position = findfirst(isequal(taxon.id), NCBITaxonomy.nodes_table.tax_id)
