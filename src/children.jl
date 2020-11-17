@@ -58,6 +58,6 @@ reached. Depending on the taxonomic level, and number of taxa under the taxon
 considered, this can be a long function to run.
 """
 function descendants(t::NCBITaxon)
-    c = _descendant(t.id)
+    c = _descendants(t.id)
     return _taxa_from_id(c)
 end
