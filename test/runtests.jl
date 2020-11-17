@@ -4,8 +4,7 @@ using Test
 my_tests = [
    "taxid.jl",
    "lineages.jl",
-   "namefinders.jl",
-   "traceur.jl"
+   "namefinders.jl"
 ]
 
 global test_n
