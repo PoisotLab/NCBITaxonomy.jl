@@ -58,6 +58,8 @@ for sp in species
         )
     )
 end
+
+first(cleanup, 5)
 ```
 
 Finally, we can look at the codes for which there is a likely issue because the
@@ -67,3 +69,13 @@ vernacular, or spelling issues:
 ```@example portal
 filter(r -> r.portal != r.name, cleanup)
 ```
+
+Note that these results should *always* be manually curated. For example, one of
+the rodents species got assigned to something which is obviously the wrong
+group:
+
+```@example portal
+filter(r -> isequal("Gentianales")(r.order), cleanup)
+```
+
+How can we fix this?
