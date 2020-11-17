@@ -14,12 +14,12 @@ end
 Recursively get the descendants of a given node.
 """
 function _descendants(id::T) where {T <: Int}
-    c = NCBITaxonomy._children(id)
+    c = _children(id)
     isempty(c) && return id
     return vcat(id, _descendants(c)...)
 end
 
-_children(ids::Vector{T}) where {T <: Int} = map(_children_nodes, ids)
+_children(ids::Vector{T}) where {T <: Int} = map(_children, ids)
 _descendants(ids::Vector{T}) where {T <: Int} = map(_descendants, ids)
 
 """
