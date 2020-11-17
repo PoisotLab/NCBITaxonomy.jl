@@ -1,14 +1,22 @@
 """
-    _parent_of(tax::NCBITaxon)
+    parent(taxon::NCBITaxon)
 
 Returns the taxon from which the argument is descended.
 """
-function _parent_of(tax::NCBITaxon)
-    position = findfirst(NCBITaxonomy.nodes_table.tax_id .== tax.id)
+function parent(taxon::NCBITaxon)
+    position = findfirst(isequal(taxon.id), NCBITaxonomy.nodes_table.tax_id)
     id = NCBITaxonomy.nodes_table.parent_tax_id[position]
     isnothing(id) && return nothing
     name = NCBITaxonomy._get_sciname_from_taxid(NCBITaxonomy.names_table, id)
     return NCBITaxon(name, id)
+end
+
+"""
+    rank(taxon::NCBITaxon)
+"""
+function rank(taxon::NCBITaxon)
+    position = findfirst(isequal(taxon.id), NCBITaxonomy.nodes_table.tax_id)
+    return NCBITaxonomy.nodes_table.rank[position]
 end
 
 """
@@ -20,7 +28,7 @@ optionally specified `stop_at` taxonomic node.
 function lineage(tax::NCBITaxon; stop_at::NCBITaxon=ncbi"root")
     lin = [tax]
     while last(lin) != stop_at
-        push!(lin, _parent_of(last(lin)))
+        push!(lin, parent(last(lin)))
     end
     return reverse(lin)
 end
