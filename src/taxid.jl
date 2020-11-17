@@ -44,13 +44,13 @@ function namefinder(df::T) where {T <: DataFrame}
             position = findfirst(isequal(name).(df.name))
             isnothing(position) && return nothing
         end
-        row = df[position,:] 
+        row = df[position,:]
         if row.class == Symbol("scientific name")
             return NCBITaxon(row.name, row.tax_id)
         else
             return NCBITaxon(_get_sciname_from_taxid(df, row.tax_id), row.tax_id)
         end
-    end 
+    end
 end
 
 """
