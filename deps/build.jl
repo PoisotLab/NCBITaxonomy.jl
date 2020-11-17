@@ -55,6 +55,14 @@ ispath(tables) || mkpath(tables)
 
 # Utility functions
 
+include(joinpath("..", "src", "enums.jl"))
+
+function _class_to_enum(c::T) where { T <: String}
+    c = replace(c, " " => "_")
+    c = replace(c, "-" => "_")
+    return getproperty(@__MODULE__, Symbol("class_$(c)"))
+end
+
 """
 This function is responsible for converting a raw line from the taxonomy dump to
 a series of correctly typed values. It is quite clearly not the most elegant
@@ -68,13 +76,14 @@ function _materialize_data(::Type{T}, v) where {T}
         T <: Union{Bool,Missing} && return parse(Bool, v)
         T <: Union{Int,Missing} && return parse(Int, v)
         T <: Symbol && return Symbol(v)
+        T <: NCBINameClass && return _class_to_enum(v)
         return v
     else
         return missing
     end
 end
 
-function _build_arrow_file(df, dump_file, arrow_file)
+function _build_arrow_file(df, dump_file)
     names_columns_types = [eltype(col) for col in eachcol(df)]
     for names_line in readlines(dump_file)
         t = String.(split(names_line, r"\t\|\t?")[1:(end - 1)])
@@ -84,9 +93,7 @@ function _build_arrow_file(df, dump_file, arrow_file)
         end
         push!(df, tuple(r...))
     end
-    Arrow.write(joinpath(tables, arrow_file), df)
-    df = nothing
-    GC.gc()
+    return df
 end
 
 # Get the data
@@ -94,14 +101,21 @@ end
 @info "Building the names file"
 ncbi_names_file_in = joinpath(@__DIR__, "dump", "names.dmp")
 ncbi_names_file_out = joinpath(@__DIR__, "tables", "names.arrow")
-ncbi_names = DataFrames.DataFrame(tax_id=Int[], name=String[], unique_name=Union{String,Missing}[], class=Symbol[])
-_build_arrow_file(ncbi_names, ncbi_names_file_in, ncbi_names_file_out)
+ncbi_names = DataFrames.DataFrame(tax_id=Int[], name=String[], unique_name=Union{String,Missing}[], class=NCBINameClass[])
+names_df = _build_arrow_file(ncbi_names, ncbi_names_file_in)
+names_df.class = Int.(names_df.class)
+Arrow.write(ncbi_names_file_out, names_df)
+names_df = nothing
+GC.gc()
 
 @info "Building the division file"
 ncbi_division_file_in = joinpath(@__DIR__, "dump", "division.dmp")
 ncbi_division_file_out = joinpath(@__DIR__, "tables", "division.arrow")
 ncbi_division = DataFrames.DataFrame(division_id=Int[], division_code=Symbol[], division_name=Symbol[], comments=Union{String,Missing}[])
-_build_arrow_file(ncbi_division, ncbi_division_file_in, ncbi_division_file_out)
+division_df = _build_arrow_file(ncbi_division, ncbi_division_file_in)
+Arrow.write(ncbi_division_file_out, division_df)
+division_df = nothing
+GC.gc()
 
 @info "Building the nodes file"
 ncbi_nodes_file_in = joinpath(@__DIR__, "dump", "nodes.dmp")
@@ -120,4 +134,7 @@ ncbi_nodes = DataFrames.DataFrame(
     specified_species=Union{Bool,Missing}[],
     hydrogenosome_code_id=Union{Int,Missing}[], inherited_hgc=Union{Bool,Missing}[]
     )
-_build_arrow_file(ncbi_nodes, ncbi_nodes_file_in, ncbi_nodes_file_out)
+nodes_df = _build_arrow_file(ncbi_nodes, ncbi_nodes_file_in)
+Arrow.write(ncbi_nodes_file_out, nodes_df)
+nodes_df = nothing
+GC.gc()

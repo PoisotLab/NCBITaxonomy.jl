@@ -39,7 +39,7 @@ Get a list of `NCBITaxon` from a vector of ids.
 function _taxa_from_id(id::Vector{T}) where {T <: Int}
     positions = findall(vec(any(NCBITaxonomy.names_table.tax_id.==permutedims(id); dims=2)))
     tdf = NCBITaxonomy.names_table[positions,:]
-    scientific_names = findall(tdf.class .== Symbol("scientific name"))
+    scientific_names = findall(tdf.class .== class_scientific_name)
     return [NCBITaxon(r.name, r.tax_id) for r in eachrow(tdf[scientific_names,:])]
 end
 
