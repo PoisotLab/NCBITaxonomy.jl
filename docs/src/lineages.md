@@ -36,8 +36,8 @@ lineage(ncbi"Lamellodiscus elegans"; stop_at=ncbi"Monogenea")
 ## Internal functions
 
 ```@docs
-NCBITaxonomy._descendant_nodes
+NCBITaxonomy._descendants
+NCBITaxonomy._children
 NCBITaxonomy._taxa_from_id
-NCBITaxonomy._children_nodes
 NCBITaxonomy._parent_of
 ```
