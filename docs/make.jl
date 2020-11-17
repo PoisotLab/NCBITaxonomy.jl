@@ -7,7 +7,8 @@ makedocs(
     pages=[
         "Index" => "index.md",
         "Finding taxa" => "namefinding.md",
-        "Navigating lineages" => "lineages.md"
+        "Navigating lineages" => "lineages.md",
+        "Portal data use-case" => "portal.md"
         ]
 )
 
