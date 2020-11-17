@@ -59,5 +59,6 @@ considered, this can be a long function to run.
 """
 function descendants(t::NCBITaxon)
     c = _descendants(t.id)
+    filter!(!isequal(t.id), c)
     return _taxa_from_id(c)
 end
