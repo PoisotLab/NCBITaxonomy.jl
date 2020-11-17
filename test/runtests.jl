@@ -4,6 +4,7 @@ using Test
 my_tests = [
    "taxid.jl",
    "lineages.jl",
+   "rank.jl",
    "namefinders.jl"
 ]
 
