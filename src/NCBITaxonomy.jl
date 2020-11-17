@@ -33,7 +33,7 @@ include("children.jl")
 export children, descendants
 
 include("lineage.jl")
-export lineage
+export lineage, parent, rank
 
 
 end
