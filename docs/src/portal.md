@@ -70,12 +70,13 @@ vernacular, or spelling issues:
 filter(r -> r.portal != r.name, cleanup)
 ```
 
-Note that these results should *always* be manually curated. For example, one of
-the rodents species got assigned to something which is obviously the wrong
-group:
+Note that these results should *always* be manually curated. For example, two
+species have been assigned to groups that are *obiously* wrong:
 
 ```@example portal
-filter(r -> isequal("Gentianales")(r.order), cleanup)
+filter(r -> r.order ∈ ["Gentianales","Hemiptera"], cleanup)
 ```
 
 How can we fix this?
+
+## Advanced validation
