@@ -54,7 +54,7 @@ function namefinder(df::T) where {T <: DataFrame}
 end
 
 """
-    taxid(name::T; fuzzy::Bool = false) where {T <: String}
+    taxid(name::T; fuzzy::Bool = false, verbose::Bool=false) where {T <: String}
 
 Returns the taxonomic ID of a taxon, given as a string. This function searches
 in the *entire* names table, which is unlikely to give a good performance when
