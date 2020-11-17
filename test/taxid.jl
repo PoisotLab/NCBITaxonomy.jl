@@ -14,6 +14,9 @@ module TestTaxid
     @test cow.name == "Bos taurus"
     @test cow.id == 9913
 
+    # Test show method
+    @test sprint(io -> show(io, cow)) == "Bos taurus (9913)"
+
     # Fuzzy matching with a scientific name
     box = taxid("Box taurus"; fuzzy=true)
     @test typeof(box) == NCBITaxon
