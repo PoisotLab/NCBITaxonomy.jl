@@ -4,7 +4,7 @@
 Internal function to retrieve the id of the children of a given node.
 """
 function _children_nodes(id::T) where {T <: Int}
-    positions = findall(NCBITaxonomy.nodes_table.parent_tax_id .== id)
+    positions = findall(isequal(id), NCBITaxonomy.nodes_table.parent_tax_id)
     return NCBITaxonomy.nodes_table.tax_id[positions]
 end
 
