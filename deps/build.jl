@@ -55,7 +55,7 @@ ispath(tables) || mkpath(tables)
 
 # Utility functions
 
-include(joinpath("..", "src", "enums.jl"))
+include(joinpath(@__DIR__, "..", "src", "types.jl"))
 
 function _class_to_enum(c::T) where { T <: String}
     c = replace(c, " " => "_")
