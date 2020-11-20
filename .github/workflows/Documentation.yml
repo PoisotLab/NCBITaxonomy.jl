@@ -2,6 +2,8 @@ name: Documentation
 
 
 on:
+  release:
+    type: [published]
   push:
     branches:
       - main
