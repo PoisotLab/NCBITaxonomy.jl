@@ -7,8 +7,6 @@ used in the Portal teaching dataset:
 > Project Teaching Database. figshare.
 > https://doi.org/10.6084/m9.figshare.1314459.v6
 
-## Getting the data
-
 We will download a list of species from figshare, which is given as a JSON file:
 
 ```@example portal
@@ -23,8 +21,6 @@ species = JSON.parsefile(species_file)
 There is are two things we want to do at this point: extract the species names
 from the file, and then validate that they are spelled correctly, or that they
 are the most recent taxonomic name according to NCBI.
-
-## Validation
 
 We will store our results in a data frame:
 
@@ -79,4 +75,7 @@ filter(r -> r.order ∈ ["Gentianales","Hemiptera"], cleanup)
 
 How can we fix this?
 
-## Advanced validation
+Well, the obvious choice here is *manual cleaning*. This is a good solution.
+Another thing that `NCBITaxonomy` offers is the ability to build a `namefinder`
+from a list of known NCBI taxa. This is good if we know that the names we expect
+to find are part of a reference list.

@@ -1,9 +1,6 @@
 {
     "title": "NCBITaxonomy.jl",
     "description": "Interact with the NCBI taxonomy backbone from Julia.",
-    "grants": [
-        {"id": "10.13039/100000001::2021909"}
-    ],
     "upload_type": "software",
     "creators": [
         {
