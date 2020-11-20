@@ -10,4 +10,8 @@ module TestNamefinders
     @test typeof(lam) == NCBITaxon
     @test lam.name == "Lamellodiscus elegans"
 
+    dipl_2 = namefinder(descendants(ncbi"Diplectanidae"))
+
+    @test dipl_2 == dipl
+
 end
