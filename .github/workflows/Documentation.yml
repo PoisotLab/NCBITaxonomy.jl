@@ -3,7 +3,7 @@ name: Documentation
 
 on:
   release:
-    type: [published]
+    type: [published,edited]
   push:
     branches:
       - main
