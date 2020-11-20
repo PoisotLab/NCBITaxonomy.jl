@@ -6,6 +6,8 @@
 lineage
 children
 descendants
+parent
+rank
 ```
 
 ## Examples
@@ -20,7 +22,14 @@ using NCBITaxonomy
 ncbi"Lamellodiscus" |> children
 ```
 
-To get the full descendants of a taxon (*i.e.* the children of its children, recursively), we can do:
+Note that the `parent` function does the opposite of `children`:
+
+```@example lineages
+ncbi"Lamellodiscus kechemirae" |> parent
+```
+
+To get the full descendants of a taxon (*i.e.* the children of its children,
+recursively), we can do:
 
 ```@example lineages
 descendants(ncbi"Diplectanidae")
@@ -33,11 +42,16 @@ takes an optional `stop_at` argument, which is the farther up it will go:
 lineage(ncbi"Lamellodiscus elegans"; stop_at=ncbi"Monogenea")
 ```
 
+The `rank` function is useful to know where in the taxonomy you are:
+
+```@example lineages
+[t => rank(t) for t in lineage(ncbi"Lamellodiscus elegans"; stop_at=ncbi"Monogenea")]
+```
+
 ## Internal functions
 
 ```@docs
-NCBITaxonomy._descendant_nodes
+NCBITaxonomy._descendants
+NCBITaxonomy._children
 NCBITaxonomy._taxa_from_id
-NCBITaxonomy._children_nodes
-NCBITaxonomy._parent_of
 ```
