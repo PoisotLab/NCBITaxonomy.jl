@@ -13,6 +13,6 @@ module TestNamefinders
     dipl_2 = namefinder(descendants(ncbi"Diplectanidae"))
 
     @test !isnothing(dipl_2("Lamellodiscus elegans"))
-    @test isnothing(dipl_2("Gallus gallus""))
+    @test isnothing(dipl_2("Gallus gallus"))
 
 end
