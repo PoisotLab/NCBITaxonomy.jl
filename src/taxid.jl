@@ -64,6 +64,15 @@ a custom version.
 taxid = namefinder(NCBITaxonomy.names_table)
 
 """
+    namefinder(tax::Vector{NCBITaxon})
+
+Returns a namefinder function that is only limited to taxa from the list.
+"""
+function namefinder(tax::Vector{NCBITaxon})
+    return namefinder(_df_from_taxlist(tax))
+end
+
+"""
     _df_from_taxlist(tax::Vector{NCBITaxon})
 
 Returns a subset of the names dataframe based on a vector of taxa.
