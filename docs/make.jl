@@ -15,6 +15,8 @@ makedocs(
 deploydocs(
     deps=Deps.pip("pygments", "python-markdown-math"),
     repo="github.com/EcoJulia/NCBITaxonomy.jl.git",
-    devbranch="master",
+    devbranch="main",
+    devurl = "dev",
+    versions = ["stable" => "v^", "v#.#", devurl => devurl],
     push_preview=true
 )
