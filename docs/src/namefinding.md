@@ -36,7 +36,10 @@ taxid("Paradiplozon homion", fuzzy=true)
 ```
 
 Note that both fuzzy searching and non-standard naming come at a performance
-cost, so it is preferable to use the strict matching unless necessary.
+cost, so it is preferable to use the strict matching unless necessary. As a
+final note, you can specify any distance function from the `StringDistances`
+package, using the `dist` argument. This is true of `taxid`, and indeed of any
+function returned by a `namefinder`.
 
 ## Building a better namefinder
 
@@ -54,7 +57,7 @@ Here is an illustration of why using namefinders makes sense. Let's say we have
 to search for a potentially misspelled name:
 
 ```@example taxid
-@time taxid("Evolavirus"; fuzzy=true)
+@time taxid("Ebulavurus"; fuzzy=true)
 ```
 
 We can build a more efficient namefinder by selecting the nodes in the taxonomy
