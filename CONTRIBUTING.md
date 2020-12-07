@@ -18,13 +18,13 @@
 - no one can push to `master`
 - that's it
 
- ## Documentation
- 
- - methods must be documented
- - use-cases and examples in the documentation are often more important than function docstrings
- - comments in the code are good (but self-explanatory code is better)
- 
- ## Testing
+## Documentation
+
+- methods must be documented
+- use-cases and examples in the documentation are often more important than function docstrings
+- comments in the code are good (but self-explanatory code is better)
+
+## Testing
 
 - functions should be tested
 - tests that use more than one function are good, as they can identify issues in integration
