@@ -33,11 +33,11 @@ Altough the input dataframe is supposed to be a subset of the (unexported)
 and `class`. Make of that information what you wish...
 """
 function namefinder(df::T) where {T <: DataFrame}
-    function _inner_finder(name::K; fuzzy::Bool=false, verbose::Bool=false) where {K <: String}
+    function _inner_finder(name::K; fuzzy::Bool=false, verbose::Bool=false, d::StringDistances.StringDistance=Levenshtein) where {K <: String}
         if fuzzy
-            correct_name, position = findnearest(name, df.name, Levenshtein())
+            correct_name, position = findnearest(name, df.name, d())
             if verbose
-                names_dist = compare(name, correct_name, Levenshtein())
+                names_dist = compare(name, correct_name, d())
                 @info "$(name) matched as $(correct_name) - distance: $(names_dist)"
             end
         else
@@ -54,7 +54,7 @@ function namefinder(df::T) where {T <: DataFrame}
 end
 
 """
-    taxid(name::T; fuzzy::Bool = false, verbose::Bool=false) where {T <: String}
+    taxid(name::T; fuzzy::Bool = false, verbose::Bool=false, d::StringDistances.StringDistance=Levenshtein) where {T <: String}
 
 Returns the taxonomic ID of a taxon, given as a string. This function searches
 in the *entire* names table, which is unlikely to give a good performance when

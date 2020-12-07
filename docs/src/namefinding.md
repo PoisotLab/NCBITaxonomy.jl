@@ -67,15 +67,15 @@ information.
 ```@example taxid
 using DataFrames, DataFramesMeta
 viralfinder = namefinder(
-         join(
-           @where(
-               select(NCBITaxonomy.nodes_table, [:tax_id, :division_code]),
-               :division_code .== Symbol("VRL")
-           ),
-           NCBITaxonomy.names_table;
-           on = :tax_id
-         )
-       )
+  leftjoin(
+    @where(
+      select(NCBITaxonomy.nodes_table, [:tax_id, :division_code]),
+      :division_code .== Symbol("VRL")
+    ),
+    NCBITaxonomy.names_table;
+    on = :tax_id
+  )
+)
 
 @time viralfinder("Evolavirus"; fuzzy=true);
 ```
