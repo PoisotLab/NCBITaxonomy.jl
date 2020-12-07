@@ -1,6 +1,7 @@
 module TestTaxid
     using Test
     using NCBITaxonomy
+    using StringDistances
 
     # Strict matching with a scientific name
     bos = taxid("Bos taurus")
@@ -24,7 +25,7 @@ module TestTaxid
     @test box.id == 9913
 
     # Fuzzy matching with a scientific name and a custom distance
-    box = taxid("Box taurus"; fuzzy=true, d=JaroWinkler)
+    box = taxid("Box taurus"; fuzzy=true, dist=StringDistances.DamerauLevenshtein)
     @test typeof(box) == NCBITaxon
     @test box.name == "Bos taurus"
     @test box.id == 9913

@@ -20,7 +20,9 @@ The generated function will return a `NCBITaxon` for a given string. By default,
 the function `taxid` is working on the entire names table, which is going to be
 slow if there are many names to fuzzy match. The keyword argument `verbose`
 (default to `false`) indicates whether the distance to a fuzzy match must be
-printed.
+printed. Finally, the `dist` keyword argument is one of the types implemented by
+`StringDistances`, and is used to switch the string distance measure used in
+fuzzy matching. The default is Levenshtein distance.
 
 Under strict matching, if no match is found, the namefinder will return
 `nothing`. This can be used to switch to the fuzzy namefinder automatically. The
@@ -33,11 +35,12 @@ Altough the input dataframe is supposed to be a subset of the (unexported)
 and `class`. Make of that information what you wish...
 """
 function namefinder(df::T) where {T <: DataFrame}
-    function _inner_finder(name::K; fuzzy::Bool=false, verbose::Bool=false, d::SD=StringDistances.Levenshtein) where {K <: AbstractString, SD <: StringDistances.StringDistance}
+    function _inner_finder(name::K; fuzzy::Bool=false, verbose::Bool=false, dist=Levenshtein) where {K <: AbstractString, SD <: StringDistance}
+        @assert dist <: StringDistances.StringDistance
         if fuzzy
-            correct_name, position = findnearest(name, df.name, d())
+            correct_name, position = findnearest(name, df.name, dist())
             if verbose
-                names_dist = compare(name, correct_name, d())
+                names_dist = compare(name, correct_name, dist())
                 @info "$(name) matched as $(correct_name) - distance: $(names_dist)"
             end
         else
@@ -54,7 +57,7 @@ function namefinder(df::T) where {T <: DataFrame}
 end
 
 """
-    taxid(name::T; fuzzy::Bool = false, verbose::Bool=false, d::SD=StringDistances.Levenshtein) where {T <: AbstractString, SD <: StringDistances.StringDistance}
+    taxid(name::T; fuzzy::Bool = false, verbose::Bool=false, dist=StringDistances.Levenshtein) where {T <: AbstractString}
 
 Returns the taxonomic ID of a taxon, given as a string. This function searches
 in the *entire* names table, which is unlikely to give a good performance when
