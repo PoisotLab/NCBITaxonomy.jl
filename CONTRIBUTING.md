@@ -11,7 +11,7 @@
 - module and struct names are camel case (`MyType`)
 - the type of arguments should be annotated as much as possible - this helps ensuring that only appropriate arguments are passed
 - the `return` statement of functions that return something must always be explicit
-- fail early, fail explicitely, fail often (but in a lot of cases, having `nothing` to return is *not* a failure)
+- fail early, fail explicitly, fail often (but in a lot of cases, having `nothing` to return is *not* a failure)
 
 ## About branches
 
