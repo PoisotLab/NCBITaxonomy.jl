@@ -77,7 +77,7 @@ viralfinder = namefinder(
   )
 )
 
-@time viralfinder("Evolavirus"; fuzzy=true);
+@time viralfinder("Bumbulu ebolavirus"; fuzzy=true);
 ```
 
 For searches in specific groups, the `descendantsfinder` is a convenient
