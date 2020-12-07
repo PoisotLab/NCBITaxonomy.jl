@@ -23,6 +23,12 @@ module TestTaxid
     @test box.name == "Bos taurus"
     @test box.id == 9913
 
+    # Fuzzy matching with a scientific name and a custom distance
+    box = taxid("Box taurus"; fuzzy=true, d=JaroWinkler)
+    @test typeof(box) == NCBITaxon
+    @test box.name == "Bos taurus"
+    @test box.id == 9913
+
     # A species that doesn't exist returns nothing
     fake = taxid("Notus existingensis") # Sweet lord
     @test isnothing(fake)
