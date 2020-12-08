@@ -1,11 +1,11 @@
-function _divisionfinder(division::Symbol=:VRL)
+function _divisionfinder(division::Symbol)
     nodes_subset = select(NCBITaxonomy.nodes_table, [:tax_id, :division_code])
     filter!((r) -> r.division_code == division, nodes_subset)
     df = leftjoin(nodes_subset, NCBITaxonomy.names_table; on=:tax_id)
     return namefinder(df)
 end
 
-function _divisionfinder(division::Vector{Symbol}=[:MAM, :ROD, :PRI])
+function _divisionfinder(division::Vector{Symbol})
     nodes_subset = select(NCBITaxonomy.nodes_table, [:tax_id, :division_code])
     filter!((r) -> r.division_code in division, nodes_subset)
     df = leftjoin(nodes_subset, NCBITaxonomy.names_table; on=:tax_id)
