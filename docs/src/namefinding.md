@@ -103,6 +103,8 @@ mammalfinder
 vertebratefinder
 plantfinder
 invertebratefinder
+rodentfinder
+primatefinder
 ```
 
 All of these return a `namefinder` function -- so for example, the viral example
