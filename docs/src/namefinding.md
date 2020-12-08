@@ -91,6 +91,32 @@ diplectanidfinder = descendantsfinder(taxid("Diplectanidae"))
 diplectanidfinder("Lamellodiscus")
 ```
 
+## Standard namefinders
+
+To save some time, there are namefinders pre-populated with the large-level
+taxonomic divisions.
+
+```@docs
+bacteriafinder
+virusfinder
+mammalfinder
+vertebratefinder
+plantfinder
+invertebratefinder
+rodentfinder
+primatefinder
+```
+
+All of these return a `namefinder` function -- so for example, the viral example
+from above can be re-written simply as:
+
+```@example taxid
+virusfinder()("Bumbulu ebolavirus"; fuzzy=true)
+```
+
+Note that we need to *call* the finder function to return the name finder. This
+may change in a future release.
+
 ## Internal functions
 
 ```@docs
