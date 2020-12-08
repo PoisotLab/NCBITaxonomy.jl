@@ -79,3 +79,10 @@ Well, the obvious choice here is *manual cleaning*. This is a good solution.
 Another thing that `NCBITaxonomy` offers is the ability to build a `namefinder`
 from a list of known NCBI taxa. This is good if we know that the names we expect
 to find are part of a reference list.
+
+In this case, we know that the species are going to be vertebrates, so we can use
+the `vertebratefinder` function to restrict the search to these groups:
+
+```@example portal
+vertebratefinder(true)("Lizard")
+```
