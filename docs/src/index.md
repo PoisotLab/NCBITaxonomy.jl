@@ -32,3 +32,7 @@ package. Note also that a number of fields are removed, and some tables are
 pre-merged - not at build time (so there is no information loss, and you are
 welcome to dig into the full data frame by reloading the arrow file), but at
 load time.
+
+The package will check that the local version of the taxonomy file is
+sufficiently recent (no older than about 30 days), and if this is not the case,
+will prompt the user to update to a more recent version.

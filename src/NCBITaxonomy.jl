@@ -3,6 +3,11 @@ using DataFrames
 using Arrow
 using StringDistances
 
+function __init__()
+    name_date = mtime(joinpath(@__DIR__, "..", "deps", "tables", "names.arrow"))
+    time() - name_date >= 2.6e+6 && @warn("Your local taxonomy version is over 30 days old, we recommend using `] build NCBITaxonomy` to get the most recent version.")
+end
+
 include("types.jl")
 export NCBITaxon, NCBINameClass
 
