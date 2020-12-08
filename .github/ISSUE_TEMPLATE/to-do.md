@@ -6,14 +6,11 @@ labels: need-triage, to do
 assignees: 'tpoisot'
 ---
 
-**What to do?**
-
+**What to do?**   
 ...
 
-**Why?**
-
+**Why?**   
 ...
 
-**## **Any ideas how?**
-
+**Any ideas how?**   
 ...

@@ -5,7 +5,8 @@ my_tests = [
    "taxid.jl",
    "lineages.jl",
    "rank.jl",
-   "namefinders.jl"
+   "namefinders.jl",
+   "divisions.jl"
 ]
 
 global test_n

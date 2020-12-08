@@ -31,6 +31,9 @@ select!(nodes_table, Not(:division_id))
 include("taxid.jl")
 export taxid, namefinder, descendantsfinder
 
+include("divisions.jl")
+export bacteriafinder, virusfinder, mammalfinder, vertebratefinder, plantfinder, invertebratefinder, rodentfinder, primatefinder
+
 include("string_macro.jl")
 export @ncbi_str
 
@@ -39,6 +42,5 @@ export children, descendants
 
 include("lineage.jl")
 export lineage, parent, rank
-
 
 end
