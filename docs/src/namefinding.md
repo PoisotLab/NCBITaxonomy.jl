@@ -4,6 +4,7 @@
 
 ```@docs
 taxid
+vernacular
 ```
 
 The `taxid` function will return a `NCBITaxon` object, which has two fields:
@@ -26,6 +27,13 @@ the *scientific name* will be returned, no matter what you search
 
 ```@example taxid
 taxid("cow")
+```
+
+This may be a good point to note that we can use the `vernacular` function to
+get a list of NCBI-known vernacular names:
+
+```@example taxid
+taxid("cow") |> vernacular
 ```
 
 You can pass an additional `fuzzy=true` keyword argument to the `taxid` function

@@ -38,4 +38,12 @@ module TestTaxid
     chicken = taxid("tchiken"; fuzzy=true, verbose=true)
     @test typeof(chicken) == NCBITaxon
 
+    #Vernacular name
+    chub = vernacular(ncbi"Leuciscus cephalus")
+    @test "European chub" in chub
+    @test "chub" in chub
+    
+    # Vernacular missing
+    @test isnothing(vernacular(ncbi"Lamellodiscus elegans"))
+
 end

@@ -43,4 +43,7 @@ export children, descendants
 include("lineage.jl")
 export lineage, parent, rank
 
+include("vernacular.jl")
+export vernacular
+
 end
