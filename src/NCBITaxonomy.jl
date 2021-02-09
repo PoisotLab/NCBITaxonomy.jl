@@ -43,7 +43,7 @@ export children, descendants
 include("lineage.jl")
 export lineage, parent, rank
 
-include("vernacular.jl")
-export vernacular
+include("nametools.jl")
+export vernacular, synonyms
 
 end
