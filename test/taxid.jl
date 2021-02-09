@@ -47,7 +47,7 @@ module TestTaxid
     @test isnothing(vernacular(ncbi"Lamellodiscus elegans"))
 
     # Synonyms
-    @test "Bos bovis" in synonyms(ncbi"Bos taurus"))
+    @test "Bos bovis" in synonyms(ncbi"Bos taurus")
     @test isnothing(synonyms(ncbi"Lamellodiscus elegans"))
 
 end
