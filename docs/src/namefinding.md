@@ -5,6 +5,7 @@
 ```@docs
 taxid
 vernacular
+synonyms
 ```
 
 The `taxid` function will return a `NCBITaxon` object, which has two fields:
