@@ -8,6 +8,7 @@ children
 descendants
 parent
 rank
+taxonomicdistance!
 ```
 
 ## Examples
