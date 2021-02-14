@@ -6,3 +6,6 @@ deps/dump
 deps/tables
 deps/.checksum
 deps/build.log
+
+# VS Code settings
+.vscode
