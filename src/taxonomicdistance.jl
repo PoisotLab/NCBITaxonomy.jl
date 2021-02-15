@@ -6,8 +6,8 @@ distance as a function to closest matching level), `strict` (a boolean to decide
 whether the distance of a taxon with itself should be read from the distance
 dictionary, or set to 0), and other keywords passed to the `lineage` function.
 
-Because the distances are symetrical, there are only $(n\times (n-1))/2$
-measurements to do.
+Because the distances are symetrical, there are only $(n(n-1))/2$ measurements
+to do.
 
 By default, this function uses the distances from Shimatani (2001):
 
