@@ -114,6 +114,8 @@ plantfinder
 invertebratefinder
 rodentfinder
 primatefinder
+phagefinder
+environmentalsamplesfinder
 ```
 
 All of these return a `namefinder` function -- so for example, the viral example

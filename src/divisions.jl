@@ -17,7 +17,7 @@ end
 
 Returns a `namefinder` limited to the viral division of the NCBI taxonomy. See
 the documentation for `namefinder` and `taxid` for more information about
-arguments.
+arguments. Note that phage are covered by `phagefinder`.
 """
 virusfinder() = _divisionfinder(:VRL)
 
@@ -96,3 +96,22 @@ Note that this is limited organisms not covered by `plantfinder`,
 `bacteriafinder`, and `virusfinder`.
 """
 invertebratefinder() = _divisionfinder(:INV)
+
+"""
+    phagefinder()
+
+Returns a `namefinder` limited to the phage division of the NCBI taxonomy. See
+the documentation for `namefinder` and `taxid` for more information about
+arguments.
+"""
+phagefinder() = _divisionfinder(:PHG)
+
+
+"""
+    environmentalsamplesfinder()
+
+Returns a `namefinder` limited to the environmental samples division of the NCBI
+taxonomy. See the documentation for `namefinder` and `taxid` for more
+information about arguments.
+"""
+environmentalsamplesfinder() = _divisionfinder(:ENV)
