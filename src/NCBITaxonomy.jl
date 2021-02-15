@@ -32,7 +32,7 @@ include("taxid.jl")
 export taxid, namefinder, descendantsfinder
 
 include("divisions.jl")
-export bacteriafinder, virusfinder, mammalfinder, vertebratefinder, plantfinder, invertebratefinder, rodentfinder, primatefinder
+export bacteriafinder, virusfinder, mammalfinder, vertebratefinder, plantfinder, invertebratefinder, rodentfinder, primatefinder, environmentalsamplesfinder, phagefinder
 
 include("string_macro.jl")
 export @ncbi_str
