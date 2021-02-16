@@ -33,6 +33,11 @@ be used to see how similar the names are, and to decide whether to keep them.
 Altough the input dataframe is supposed to be a subset of the (unexported)
 `names_table`, all that is required is that it has the columns `tax_id`, `name`,
 and `class`. Make of that information what you wish...
+
+As a final note, all `namefinder` functions accept a `strict` argument, which is
+restricted to valid scientific names (with the exception of synonyms). This has
+the potential to make a number of functions much faster if you know that the
+names are valid.
 """
 function namefinder(df::T; strict::Bool=false) where {T <: DataFrame}
     if strict

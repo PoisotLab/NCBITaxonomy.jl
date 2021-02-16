@@ -19,7 +19,6 @@ function _descendants(id::T) where {T <: Int}
     return vcat(id, _descendants(c)...)
 end
 
-#_children(ids::Vector{T}) where {T <: Int} = map(_children, ids)
 _descendants(ids::Vector{T}) where {T <: Int} = map(_descendants, ids)
 
 """
