@@ -83,7 +83,7 @@ end
 
 Returns a subset of the names dataframe based on a vector of taxa.
 """
-function _df_from_taxlist(tax::Vector{NCBITaxon}; strict:Bool=false)
+function _df_from_taxlist(tax::Vector{NCBITaxon}; strict::Bool=false)
     ids = [t.id for t in tax]
     positions = findall(vec(any(NCBITaxonomy.names_table.tax_id .== permutedims(ids); dims=2)))
     if strict
