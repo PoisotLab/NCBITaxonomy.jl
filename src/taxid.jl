@@ -4,11 +4,8 @@
 This internal function will return a scientific name from a numerical `id`.
 """
 function _get_sciname_from_taxid(df::T, id::Int) where {T <: DataFrame}
-    ok_taxid = findall(isequal(id).(df.tax_id))
-    tdf = df[ok_taxid,:]
-    _is_sci = isequal(class_scientific_name)
-    scientific_names = findall(_is_sci.(tdf.class))
-    return only(tdf[scientific_names,:].name)
+    rows = (isequal(id).(df.tax_id)).&(isequal(NCBITaxonomy.class_scientific_name).(df.class))
+    return only(NCBITaxonomy.names_table[rows,:].name)
 end
 
 """
