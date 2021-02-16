@@ -35,7 +35,7 @@ Altough the input dataframe is supposed to be a subset of the (unexported)
 and `class`. Make of that information what you wish...
 """
 function namefinder(df::T) where {T <: DataFrame}
-    function _inner_finder(name::K; fuzzy::Bool=false, verbose::Bool=false, dist=Levenshtein) where {K <: AbstractString, SD <: StringDistance}
+    function _inner_finder(name::K; fuzzy::Bool=false, verbose::Bool=false, dist::SD=Levenshtein) where {K <: AbstractString, SD <: StringDistance}
         @assert dist <: StringDistances.StringDistance
         if fuzzy
             correct_name, position = findnearest(name, df.name, dist())
