@@ -38,7 +38,7 @@ names are valid.
 """
 function namefinder(df::T; strict::Bool=false) where {T <: DataFrame}
     if strict
-        df = filter(r -> isequal(class_scientific_name)(r.class), df)
+        df = df[df.class .== class_scientific_name, :]
     end
     function _inner_finder(name::K; fuzzy::Bool=false, verbose::Bool=false, dist=Levenshtein) where {K <: AbstractString}
         @assert dist <: StringDistances.StringDistance
