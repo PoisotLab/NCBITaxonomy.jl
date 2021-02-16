@@ -34,7 +34,10 @@ Altough the input dataframe is supposed to be a subset of the (unexported)
 `names_table`, all that is required is that it has the columns `tax_id`, `name`,
 and `class`. Make of that information what you wish...
 """
-function namefinder(df::T) where {T <: DataFrame}
+function namefinder(df::T; strict::Bool=false) where {T <: DataFrame}
+    if strict
+        df = filter(r -> isequal(class_scientific_name)(r.class), df)
+    end
     function _inner_finder(name::K; fuzzy::Bool=false, verbose::Bool=false, dist::SD=Levenshtein) where {K <: AbstractString, SD <: StringDistance}
         @assert dist <: StringDistances.StringDistance
         if fuzzy
@@ -67,12 +70,12 @@ a custom version.
 taxid = namefinder(NCBITaxonomy.names_table)
 
 """
-    namefinder(tax::Vector{NCBITaxon})
+    namefinder(tax::Vector{NCBITaxon}; strict::Bool=false)
 
 Returns a namefinder function that is only limited to taxa from the list.
 """
-function namefinder(tax::Vector{NCBITaxon})
-    return namefinder(_df_from_taxlist(tax))
+function namefinder(tax::Vector{NCBITaxon}; strict::Bool=false)
+    return namefinder(_df_from_taxlist(tax; strict=strict))
 end
 
 """
@@ -80,10 +83,14 @@ end
 
 Returns a subset of the names dataframe based on a vector of taxa.
 """
-function _df_from_taxlist(tax::Vector{NCBITaxon})
+function _df_from_taxlist(tax::Vector{NCBITaxon}; strict:Bool=false)
     ids = [t.id for t in tax]
     positions = findall(vec(any(NCBITaxonomy.names_table.tax_id .== permutedims(ids); dims=2)))
-    return NCBITaxonomy.names_table[positions, :]
+    if strict
+        return NCBITaxonomy.names_table[positions, :]
+    else
+        return filter(r -> isequal(class_scientific_name)(r.class), NCBITaxonomy.names_table[positions, :])
+    end
 end
 
 """
@@ -95,6 +102,6 @@ dealing with large groups.
 """
 function descendantsfinder(t::NCBITaxon)
     d = descendants(t)
-    df = _df_from_taxlist(d)
+    df = _df_from_taxlist(d; strict=true)
     return namefinder(df)
 end
