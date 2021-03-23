@@ -2,7 +2,7 @@ using NCBITaxonomy
 using Test
 
 my_tests = [
-   "taxid.jl",
+   "taxon.jl",
    "lineages.jl",
    "rank.jl",
    "namefinders.jl",

@@ -15,7 +15,9 @@ function _sciname_from_taxid(df::DataFrame, id::Integer)
     return df.name[findfirst((df.tax_id .== id).&(df.class .== NCBITaxonomy.class_scientific_name))]
 end
 
-function taxon(name::AbstractString; kwargs...)
+taxon(name::AbstractString; kwargs...) = taxon(NCBITaxonomy.names_table, name; kwargs...)
+
+function taxon(df::DataFrame, name::AbstractString; kwargs...)
     id = _id_from_name(name; kwargs...)
     isnothing(id) && return nothing
     return NCBITaxon(_sciname_from_taxid(id), id)

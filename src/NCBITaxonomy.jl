@@ -38,7 +38,7 @@ select!(nodes_table, Not(:embl))
 nodes_table = innerjoin(nodes_table, division_table; on=:division_id)
 select!(nodes_table, Not(:division_id))
 
-include("taxid.jl")
+include("taxon.jl")
 export taxon, @ncbi_str
 
 include("divisions.jl")

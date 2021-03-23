@@ -7,10 +7,9 @@ function Base.parent(taxon::NCBITaxon)
     position = findfirst(isequal(taxon.id), NCBITaxonomy.nodes_table.tax_id)
     id = NCBITaxonomy.nodes_table.parent_tax_id[position]
     isnothing(id) && return nothing
-    name = NCBITaxonomy._get_sciname_from_taxid(NCBITaxonomy.names_table, id)
+    name = NCBITaxonomy._sciname_from_taxid(NCBITaxonomy.names_table, id)
     return NCBITaxon(name, id)
 end
-
 """
     rank(taxon::NCBITaxon)
 
