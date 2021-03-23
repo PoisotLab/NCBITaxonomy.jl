@@ -1,7 +1,7 @@
 _id_from_name(name::AbstractString; kwargs...) = _id_from_name(NCBITaxonomy.names_table, name; kwargs...)
 _sciname_from_taxid(id::Integer) = _sciname_from_taxid(NCBITaxonomy.names_table, id)
 
-function _id_from_name(df::DataFrame, name::AbstractString; strict::Bool=true, verbose::Bool=false, dist::Type{SD}=Levenshtein) where {SD <: StringDistance}
+function _id_from_name(df::DataFrame, name::AbstractString; strict::Bool=true, dist::Type{SD}=Levenshtein) where {SD <: StringDistance}
     if strict
         position = findfirst(isequal(name), df.name)
         return isnothing(position) ? nothing : df.tax_id[position]
@@ -15,8 +15,26 @@ function _sciname_from_taxid(df::DataFrame, id::Integer)
     return df.name[findfirst((df.tax_id .== id).&(df.class .== NCBITaxonomy.class_scientific_name))]
 end
 
+"""
+    taxon(name::AbstractString; kwargs...)
+
+The `taxon` function is the core entry point in the NCBI taxonomy. It takes a
+string, and a series of keywords, and go look for this taxon in the dataframe
+(by default the entire names table).
+
+The keywords are:
+
+- `strict` (def. `true`), allows fuzzy matching
+- `dist` (def. `Levenshtein`), the string distance function to use
+"""
 taxon(name::AbstractString; kwargs...) = taxon(NCBITaxonomy.names_table, name; kwargs...)
 
+"""
+    taxon(df::DataFrame, name::AbstractString; kwargs...)
+
+Additional method for `taxon` with an extra dataframe argument, used most often
+with a `namefinder`. Accepts the usual `taxon` keyword arguments.
+"""
 function taxon(df::DataFrame, name::AbstractString; kwargs...)
     id = _id_from_name(df, name; kwargs...)
     isnothing(id) && return nothing
