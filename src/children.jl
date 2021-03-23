@@ -19,7 +19,6 @@ function _descendants(id::T) where {T <: Int}
     return vcat(id, _descendants(c)...)
 end
 
-#_children(ids::Vector{T}) where {T <: Int} = map(_children, ids)
 _descendants(ids::Vector{T}) where {T <: Int} = map(_descendants, ids)
 
 """
@@ -45,10 +44,7 @@ end
 Returns the node immediately below the taxon given as argument, or `nothing` if
 the taxon is terminal.
 """
-function children(t::NCBITaxon)
-    c = _children(t.id)
-    return _taxa_from_id(c)
-end
+children(t::NCBITaxon) = [NCBITaxon(NCBITaxonomy._sciname_from_taxid(i), i) for i in _children(t.id)]
 
 """
     descendants(t::NCBITaxon)
