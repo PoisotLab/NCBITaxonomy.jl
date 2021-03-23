@@ -44,16 +44,12 @@ export taxon, @ncbi_str
 include("divisions.jl")
 export bacteriafinder, virusfinder, mammalfinder, vertebratefinder, plantfinder, invertebratefinder, rodentfinder, primatefinder, environmentalsamplesfinder, phagefinder
 
-include("children.jl")
-export children, descendants
+include("lineage/children.jl")
+include("lineage/lineage.jl")
+export children, descendants, lineage, parent, rank
 
-include("lineage.jl")
-export lineage, parent, rank
-
-include("nametools.jl")
-export vernacular, synonyms
-
-include("taxonomicdistance.jl")
-export taxonomicdistance, taxonomicdistance!
+include("utility/nametools.jl")
+include("utility/taxonomicdistance.jl")
+export vernacular, synonyms, taxonomicdistance, taxonomicdistance!
 
 end
