@@ -22,23 +22,6 @@ end
 _descendants(ids::Vector{T}) where {T <: Int} = map(_descendants, ids)
 
 """
-    _taxa_from_id(id::Vector{T}) where {T <: Int}
-
-Get a list of `NCBITaxon` from a vector of ids.
-"""
-function _taxa_from_id(id::Vector{T}) where {T <: Int}
-    tax = Vector{NCBITaxon}(undef, length(id))
-    scientific_names = findall(isequal(class_scientific_name), NCBITaxonomy.names_table.class)
-    tdf = NCBITaxonomy.names_table[scientific_names,:]
-    positions = indexin(id, tdf.tax_id)
-    tdf = tdf[positions,:]
-    for i in eachindex(id)
-        tax[i] = NCBITaxon(tdf.name[i], tdf.tax_id[i])
-    end
-    return tax
-end
-
-"""
     children(t::NCBITaxon)
 
 Returns the node immediately below the taxon given as argument, or `nothing` if
