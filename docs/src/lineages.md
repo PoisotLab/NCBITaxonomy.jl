@@ -48,11 +48,3 @@ The `rank` function is useful to know where in the taxonomy you are:
 ```@example lineages
 [t => rank(t) for t in lineage(ncbi"Lamellodiscus elegans"; stop_at=ncbi"Monogenea")]
 ```
-
-## Internal functions
-
-```@docs
-NCBITaxonomy._descendants
-NCBITaxonomy._children
-NCBITaxonomy._taxa_from_id
-```

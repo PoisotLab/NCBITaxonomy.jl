@@ -14,6 +14,7 @@ consortium, with financial support from the Institut de Valorisation des Donnée
 - retrieval of names from the taxonomy
 - listing of children and descendant taxa
 - fuzzy matching of names
+- taxonomic distance measurement based on Shimatani distance
 
 ## How does it work?
 

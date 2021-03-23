@@ -44,9 +44,9 @@ them:
 ```@example portal
 for sp in species
     portal_name = sp["species"] == "sp." ? sp["genus"] : sp["genus"]*" "*sp["species"]
-    ncbi_tax = taxid(portal_name)
+    ncbi_tax = taxon(portal_name)
     if isnothing(ncbi_tax)
-        ncbi_tax = taxid(portal_name; fuzzy=true)
+        ncbi_tax = taxon(portal_name; strict=false)
     end
     ncbi_lin = lineage(ncbi_tax)
     push!(cleanup,
@@ -81,7 +81,7 @@ filter(r -> r.order ∈ ["Gentianales","Hemiptera"], cleanup)
 ## Fixing the mis-identified species
 
 Well, the obvious choice here is *manual cleaning*. This is a good solution.
-Another thing that `NCBITaxonomy` offers is the ability to build a `namefinder`
+Another thing that `NCBITaxonomy` offers is the ability to build a `namefilter`
 from a list of known NCBI taxa. This is good if we know that the names we expect
 to find are part of a reference list.
 
@@ -89,13 +89,14 @@ In this case, we know that the species are going to be vertebrates, so we can us
 the `vertebratefinder` function to restrict the search to these groups:
 
 ```@example portal
-vertebratefinder(true)("Lizard"; fuzzy=true)
+vert = vertebratefilter(true) # We want taxa that are specific divisions of vertebrates as well
+taxon(vert, "Lizard"; strict=false)
 ```
 
 However, this approach does not seem to work for the second group:
 
 ```@example portal
-vertebratefinder(true)("Perognathus hispidus"; fuzzy=true)
+taxon(vert, "Perognathus hispidus"; strict=false)
 ```
 
 ## The mystery of the hispid pocket mouse
@@ -109,61 +110,17 @@ species that end with *hispidus*, and trying different string distances is not
 going to help. We can try:
 
 ```@example portal
-vertebratefinder(true)("Perognathus hispidus"; fuzzy=true, dist=DamerauLevenshtein)
+taxon(vert, "Perognathus hispidus"; strict=false, dist=DamerauLevenshtein) |> vernacular
 ```
 
-This returns a valid taxon, but an incorrect one (the Olive-backed pocket
-mouse). There is no obvious way to solve this problem.
-
-*Or is it?*
-
-To solve the issue with Lizards, we had to move away from `taxid`, and use
-`verterbatefinder` to limit the scope of the search. It would save some time to
-use this for the entire portal dataset, so let's create a `portalnamesolver`
-function:
-
-```@example portal
-portalnamesolver = vertebratefinder(true)
-```
-
-It currently does *not* help with our example - but this is ok, as we cal use
-one of Julia's features to hard-code the solution: dispatching on values.
-Because `portalnamesolver` is a singleton function (due to the way `namefinder`
-works), we need to be explicit about which module we want to expand it from (the
-`@__MODULE__` will get the appropriate value, which can be `Main` if you work
-from the REPL, the Weave sandbox if you are generatic a document, or your own
-module if you structure your analysis this wat):
-
-```@example portal
-Env = @__MODULE__
-function Env.portalnamesolver(::Type{Val{Symbol("Perognathus hispidus")}})
-    return ncbi"Chaetodipus hispidus"
-end
-```
-
-This definition says "every time we call the `portalnamesolver` with a `Symbol`
-containing this species name, return this species". We can call it with:
-
-```@example portal
-portalnamesolver(Val{Symbol("Perognathus hispidus")})
-```
-
-Note that this is *not* changing the behavior of our `portalnamesolver`, it is
-simply adding a method:
-
-```@example portal
-portalnamesolver("Lizards"; fuzzy=true)
-```
-
-At this point, we may want to update the very first loop, to use the
-`portalnamesolver` throughout.
+This returns a valid taxon, but an incorrect one. There is no obvious way to
+solve this problem. There are techniques relying on code generation, or
+dispatching on values, but they are probably not going to be as general as a
+good lookup table to correct the names that are knwon to be problematic.
 
 ## Wrapping-up
 
 This vignette illustrates how to go through a list of names, and match them
 against the NCBI taxonomy. We have seen a number of functions from
-`NCBITaxonomy`, including fuzzy string searching,. using custom string
-distances, limiting the taxonomic scope of the search, and finally using
-value-based dispatch to fix the unfixable. The last step can be automated a lot
-by relying on Julia's existing code generation techniques, but this goes beyond
-the scope of this vignette.
+`NCBITaxonomy`, including fuzzy string searching, using custom string distances,
+and limiting the taxonomic scope of the search.

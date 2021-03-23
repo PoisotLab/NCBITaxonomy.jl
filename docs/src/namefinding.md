@@ -1,14 +1,15 @@
 # Finding taxa
 
-## The `taxid` function
+## The `taxon` function
 
 ```@docs
-taxid
+taxon
 vernacular
 synonyms
+authority
 ```
 
-The `taxid` function will return a `NCBITaxon` object, which has two fields:
+The `taxon` function will return a `NCBITaxon` object, which has two fields:
 `name` and `id`. We do not return the `class` attribute, because the package
 will always return the scientific name, as the examples below illustrate:
 
@@ -37,100 +38,75 @@ get a list of NCBI-known vernacular names:
 taxid("cow") |> vernacular
 ```
 
-You can pass an additional `fuzzy=true` keyword argument to the `taxid` function
-to perform fuzzy name matching using the Levenshtein distance:
+It also work with authorities:
 
 ```@example taxid
-taxid("Paradiplozon homion", fuzzy=true)
+taxid("cow") |> authority
 ```
 
-Note that both fuzzy searching and non-standard naming come at a performance
-cost, so it is preferable to use the strict matching unless necessary. As a
-final note, you can specify any distance function from the `StringDistances`
-package, using the `dist` argument. This is true of `taxid`, and indeed of any
-function returned by a `namefinder`.
+You can pass an additional `strict=false` keyword argument to the `taxon`
+function to perform fuzzy name matching using the Levenshtein distance:
 
-## Building a better namefinder
+```@example taxid
+taxon("Paradiplozon homion", strict=false)
+```
 
-The `namefinder` function has one job: generating a function that works exactly
-like `taxid`, but only searches on a smaller subset of the data. In fact,
-`taxid` is a special case of `namefinder`, which simply searches the whole
-database.
+Note that fuzzy searching comes at a performance cost, so it is preferable to
+use the strict matching unless necessary. As a final note, you can specify any
+distance function from the `StringDistances` package, using the `dist` argument.
+
+## Building a better namefilter
+
+The `taxon` function, by default, searches in the entire names table. In many
+cases, we can restrict the scope of the search quite a lot by searching only in
+the range of names that match a given condition. For this reason, the `taxon`
+function also has a method with a first argument being a data frame of names.
+These are generated using `namefilter`, as well as a varitety of helper
+functions.
 
 ```@docs
-namefinder
-descendantsfinder
+namefilter
 ```
 
-Here is an illustration of why using namefinders makes sense. Let's say we have
+Here is an illustration of why using namefilters makes sense. Let's say we have
 to search for a potentially misspelled name:
 
 ```@example taxid
-@time taxid("Ebulavurus"; fuzzy=true)
+@time taxon("Ebulavurus"; strict=false);
 ```
 
-We can build a more efficient namefinder by selecting the nodes in the taxonomy
-that belong to the `VRL` division. Doing so requires to call `namefinder` on a
-`DataFrame`. Note that we are doing some merging here, which results in the data
-frame we use having more columns than the names data frame -- but this does not
-matter, because the `namefinder` is not picky about having *too much*
-information.
+We can use the `virusfilter()` function to generate a table with viruses only:
 
 ```@example taxid
-using DataFrames, DataFramesMeta
-viralfinder = namefinder(
-  leftjoin(
-    @where(
-      select(NCBITaxonomy.nodes_table, [:tax_id, :division_code]),
-      :division_code .== Symbol("VRL")
-    ),
-    NCBITaxonomy.names_table;
-    on = :tax_id
-  )
-)
-
-@time viralfinder("Bumbulu ebolavirus"; fuzzy=true);
+viruses = virusfilter()
+@time taxon(viruses, "Bumbulu ebolavirus"; strict=false);
 ```
 
-For searches in specific groups, the `descendantsfinder` is a convenient
-wrapper: it will return a `namefinder` limited to all taxa below its argument.
+A `namefilter` can be built in a number of ways, including by passing a list of
+taxa:
 
 ```@example taxid
-diplectanidfinder = descendantsfinder(taxid("Diplectanidae"))
-diplectanidfinder("Lamellodiscus")
+diplectanids = namefilter(descendants(ncbi"Diplectanidae"))
+taxon(diplectanids, "Lamellodiscus")
 ```
 
-## Standard namefinders
+## Standard namefilters
 
-To save some time, there are namefinders pre-populated with the large-level
+To save some time, there are namefilters pre-populated with the large-level
 taxonomic divisions.
 
 ```@docs
-bacteriafinder
-virusfinder
-mammalfinder
-vertebratefinder
-plantfinder
-invertebratefinder
-rodentfinder
-primatefinder
-phagefinder
-environmentalsamplesfinder
+bacteriafilter
+virusfilter
+mammalfilter
+vertebratefilter
+plantfilter
+invertebratefilter
+rodentfilter
+primatefilter
+phagefilter
+environmentalsamplesfilter
 ```
 
-All of these return a `namefinder` function -- so for example, the viral example
-from above can be re-written simply as:
-
-```@example taxid
-virusfinder()("Bumbulu ebolavirus"; fuzzy=true)
-```
-
-Note that we need to *call* the finder function to return the name finder. This
-may change in a future release.
-
-## Internal functions
-
-```@docs
-NCBITaxonomy._get_sciname_from_taxid
-NCBITaxonomy._df_from_taxlist
-```
+All of these return a dataframe which can be passed to the `taxon` function as a
+first argument.

@@ -52,6 +52,6 @@ export children, descendants, lineage, parent, rank
 
 include("utility/nametools.jl")
 include("utility/taxonomicdistance.jl")
-export vernacular, synonyms, taxonomicdistance, taxonomicdistance!
+export vernacular, synonyms, authority, taxonomicdistance, taxonomicdistance!
 
 end
