@@ -22,3 +22,15 @@ function synonyms(t::NCBITaxon)
     p = findall(isequal(NCBITaxonomy.class_synonym), x.class)
     return length(p) == 0 ? nothing : x.name[p]
 end
+
+"""
+    authority(t::NCBITaxon)
+
+This function will return `nothing` if no authority exist, and a string with the
+authority if found.
+"""
+function authority(t::NCBITaxon)
+    x = NCBITaxonomy.names_table[findall(NCBITaxonomy.names_table.tax_id .== t.id),:]
+    p = findall(isequal(NCBITaxonomy.class_authority), x.class)
+    return length(p) == 0 ? nothing : first(x.name[p])
+end
