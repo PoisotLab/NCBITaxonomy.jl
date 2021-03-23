@@ -3,21 +3,31 @@ using DataFrames
 using Arrow
 using StringDistances
 
+if !haskey(ENV, "NCBITAXONOMY_PATH")
+    @warn """
+    The environmental varialbe NCBITAXONOMY_PATH is not set, so the tables will
+    be stored in the package path. This is not ideal, and you really should set
+    the NCBITAXONOMY_PATH.
+    """
+end
+const taxpath = get(ENV, "NCBITAXONOMY_PATH", joinpath(@__DIR__, "..", "deps"))
+ispath(taxpath) || mkpath(taxpath)
+
 function __init__()
-    name_date = mtime(joinpath(@__DIR__, "..", "deps", "tables", "names.arrow"))
+    name_date = mtime(joinpath(taxpath, "tables", "names.arrow"))
     time() - name_date >= 2.6e+6 && @warn("Your local taxonomy version is over 30 days old, we recommend using `] build NCBITaxonomy` to get the most recent version.")
 end
 
 include("types.jl")
 export NCBITaxon, NCBINameClass
 
-names_table = DataFrame(Arrow.Table(joinpath(@__DIR__, "..", "deps", "tables", "names.arrow")))
+names_table = DataFrame(Arrow.Table(joinpath(taxpath, "tables", "names.arrow")))
 names_table.class = NCBINameClass.(names_table.class)
 
-division_table = DataFrame(Arrow.Table(joinpath(@__DIR__, "..", "deps", "tables", "division.arrow")))
+division_table = DataFrame(Arrow.Table(joinpath(taxpath, "tables", "division.arrow")))
 select!(division_table, Not(:comments))
 
-nodes_table = DataFrame(Arrow.Table(joinpath(@__DIR__, "..", "deps", "tables", "nodes.arrow")))
+nodes_table = DataFrame(Arrow.Table(joinpath(taxpath, "tables", "nodes.arrow")))
 select!(nodes_table, Not(r"inherited_"))
 select!(nodes_table, Not(r"_code_id"))
 select!(nodes_table, Not(:genbank_hidden))
@@ -29,13 +39,10 @@ nodes_table = innerjoin(nodes_table, division_table; on=:division_id)
 select!(nodes_table, Not(:division_id))
 
 include("taxid.jl")
-export taxid, namefinder, descendantsfinder
+export taxon, @ncbi_str
 
 include("divisions.jl")
 export bacteriafinder, virusfinder, mammalfinder, vertebratefinder, plantfinder, invertebratefinder, rodentfinder, primatefinder, environmentalsamplesfinder, phagefinder
-
-include("string_macro.jl")
-export @ncbi_str
 
 include("children.jl")
 export children, descendants

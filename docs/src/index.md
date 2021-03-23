@@ -33,6 +33,12 @@ pre-merged - not at build time (so there is no information loss, and you are
 welcome to dig into the full data frame by reloading the arrow file), but at
 load time.
 
+*Please note* that the taxonomy dump is a big download. If the
+`NCBITAXONOMY_PATH` is not set, it will be stored in the package folder under
+the `.julia` directory, which is a *bad idea*. We strongly recommend editing
+your [configuration
+file](https://docs.julialang.org/en/v1/manual/environment-variables/).
+
 The package will check that the local version of the taxonomy file is
 sufficiently recent (no older than about 30 days), and if this is not the case,
 will prompt the user to update to a more recent version.

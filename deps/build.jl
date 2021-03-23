@@ -4,12 +4,20 @@ import Tar
 import Arrow
 import DataFrames
 
-@info @__DIR__
-
 # URL for the taxonomy dump
 const ncbi_ftp = "https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/"
 const archive = ncbi_ftp * "new_taxdump.tar.gz"
 const checksum = archive * ".md5"
+
+if !haskey(ENV, "NCBITAXONOMY_PATH")
+    @warn """
+    The environmental varialbe NCBITAXONOMY_PATH is not set, so the tables will
+    be stored in the package path. This is not ideal, and you really should set
+    the NCBITAXONOMY_PATH.
+    """
+end
+const taxpath = get(ENV, "NCBITAXONOMY_PATH", joinpath(@__DIR__, "..", "deps"))
+ispath(taxpath) || mkpath(taxpath)
 
 chk_file = download(checksum)
 chk = split(readlines(chk_file)[1], " ")[1]
@@ -17,28 +25,28 @@ chk = split(readlines(chk_file)[1], " ")[1]
 
 function download_dump(url, chk, dest)
     @info "Downloading the taxonomy data from $(url)"
-    if ispath(joinpath(@__DIR__, dest))
+    if ispath(joinpath(taxpath, dest))
         @info "Removing the previous version of the taxonomy"
-        rm(joinpath(@__DIR__, dest); force=true, recursive=true)
-        mkpath(joinpath(@__DIR__, dest))
+        rm(joinpath(taxpath, dest); force=true, recursive=true)
+        mkpath(joinpath(taxpath, dest))
     else
-        mkpath(joinpath(@__DIR__, dest))
+        mkpath(joinpath(taxpath, dest))
     end
     arc = download(url)
     vrf = bytes2hex(open(MD5.md5, arc))
     vrf == chk || throw(ErrorException("Wrong checksum for the NCBI taxonomy archive file - unable to download"))
-    write(joinpath(@__DIR__, ".checksum"), vrf)
-    Tar.extract(GZip.open(arc), joinpath(@__DIR__, dest))
+    write(joinpath(taxpath, ".checksum"), vrf)
+    Tar.extract(GZip.open(arc), joinpath(taxpath, dest))
 end
 
 # The next block is about making sure that we don't download something that has
 # not changed when we build the package. The taxonomy dump is not gigantic, but
 # there is no need to get it over and over again.
-if !isfile(joinpath(@__DIR__, ".checksum"))
+if !isfile(joinpath(taxpath, ".checksum"))
     @info "No local taxonomy checksum found"
     download_dump(archive, chk, "dump")
 else
-    local_chk = readline(joinpath(@__DIR__, ".checksum"))
+    local_chk = readline(joinpath(taxpath, ".checksum"))
     if local_chk != chk
         @info "Local and remote checksum do not match"
         download_dump(archive, chk, "dump")
@@ -50,7 +58,7 @@ end
 @info "Materializing the taxonomy"
 
 # This is the separator used for fields in all the files
-tables = joinpath(@__DIR__, "tables")
+tables = joinpath(taxpath, "tables")
 ispath(tables) || mkpath(tables)
 
 # Utility functions
@@ -99,8 +107,8 @@ end
 # Get the data
 
 @info "Building the names file"
-ncbi_names_file_in = joinpath(@__DIR__, "dump", "names.dmp")
-ncbi_names_file_out = joinpath(@__DIR__, "tables", "names.arrow")
+ncbi_names_file_in = joinpath(taxpath, "dump", "names.dmp")
+ncbi_names_file_out = joinpath(taxpath, "tables", "names.arrow")
 ncbi_names = DataFrames.DataFrame(tax_id=Int[], name=String[], unique_name=Union{String,Missing}[], class=NCBINameClass[])
 names_df = _build_arrow_file(ncbi_names, ncbi_names_file_in)
 names_df.class = Int.(names_df.class)
@@ -109,8 +117,8 @@ names_df = nothing
 GC.gc()
 
 @info "Building the division file"
-ncbi_division_file_in = joinpath(@__DIR__, "dump", "division.dmp")
-ncbi_division_file_out = joinpath(@__DIR__, "tables", "division.arrow")
+ncbi_division_file_in = joinpath(taxpath, "dump", "division.dmp")
+ncbi_division_file_out = joinpath(taxpath, "tables", "division.arrow")
 ncbi_division = DataFrames.DataFrame(division_id=Int[], division_code=Symbol[], division_name=Symbol[], comments=Union{String,Missing}[])
 division_df = _build_arrow_file(ncbi_division, ncbi_division_file_in)
 Arrow.write(ncbi_division_file_out, division_df)
@@ -118,8 +126,8 @@ division_df = nothing
 GC.gc()
 
 @info "Building the nodes file"
-ncbi_nodes_file_in = joinpath(@__DIR__, "dump", "nodes.dmp")
-ncbi_nodes_file_out = joinpath(@__DIR__, "tables", "nodes.arrow")
+ncbi_nodes_file_in = joinpath(taxpath, "dump", "nodes.dmp")
+ncbi_nodes_file_out = joinpath(taxpath, "tables", "nodes.arrow")
 ncbi_nodes = DataFrames.DataFrame(
     tax_id=Int[], parent_tax_id=Int[],
     rank=Symbol[],

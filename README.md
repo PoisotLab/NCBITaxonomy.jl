@@ -13,6 +13,12 @@ build the package again.
 
 [ncbitax]: https://www.ncbi.nlm.nih.gov/taxonomy
 
+*Please note* that the taxonomy dump is a big download. If the
+`NCBITAXONOMY_PATH` is not set, it will be stored in the package folder under
+the `.julia` directory, which is a *bad idea*. We strongly recommend editing
+your [configuration
+file](https://docs.julialang.org/en/v1/manual/environment-variables/).
+
 This package is developed as part of the activities of the Viral Emergence
 Research Initiative ([VERENA][verena]) consortium, with financial support from
 the Institut de Valorisation des Données ([IVADO][ivado]) at Université de
