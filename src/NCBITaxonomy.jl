@@ -41,8 +41,10 @@ select!(nodes_table, Not(:division_id))
 include("taxon.jl")
 export taxon, @ncbi_str
 
-include("divisions.jl")
-export bacteriafinder, virusfinder, mammalfinder, vertebratefinder, plantfinder, invertebratefinder, rodentfinder, primatefinder, environmentalsamplesfinder, phagefinder
+include("namefilters/namefilter.jl")
+include("namefilters/divisions.jl")
+export namefilter
+export bacteriafilter, virusfilter, mammalfilter, vertebratefilter, plantfilter, invertebratefilter, rodentfilter, primatefilter, environmentalsamplesfilter, phagefilter
 
 include("lineage/children.jl")
 include("lineage/lineage.jl")

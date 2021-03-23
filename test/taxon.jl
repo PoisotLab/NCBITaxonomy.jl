@@ -16,7 +16,7 @@ module TestTaxon
     @test cow.id == 9913
 
     # Test show method
-    @test sprint(io -> show(io, cow)) == "Bos taurus (9913)"
+    @test sprint(io -> show(io, cow)) == "Bos taurus (ncbi:9913)"
 
     # Fuzzy matching with a scientific name
     box = taxon("Box taurus"; strict=false)

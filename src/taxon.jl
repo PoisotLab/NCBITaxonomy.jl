@@ -18,9 +18,9 @@ end
 taxon(name::AbstractString; kwargs...) = taxon(NCBITaxonomy.names_table, name; kwargs...)
 
 function taxon(df::DataFrame, name::AbstractString; kwargs...)
-    id = _id_from_name(name; kwargs...)
+    id = _id_from_name(df, name; kwargs...)
     isnothing(id) && return nothing
-    return NCBITaxon(_sciname_from_taxid(id), id)
+    return NCBITaxon(_sciname_from_taxid(df, id), id)
 end
 
 """

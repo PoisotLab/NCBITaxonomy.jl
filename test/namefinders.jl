@@ -3,16 +3,16 @@ module TestNamefinders
     using Test
     using NCBITaxonomy
 
-    dipl = descendantsfinder(ncbi"Diplectanidae")
+    dipl = descendants(ncbi"Diplectanidae")
 
-    lam = dipl("Lamellodiscus elegans")
+    lam = taxon(namefilter(dipl), "Lamellodiscus elegans")
 
     @test typeof(lam) == NCBITaxon
     @test lam.name == "Lamellodiscus elegans"
 
-    dipl_2 = namefinder(descendants(ncbi"Diplectanidae"))
+    dipl_2 = namefilter(descendants(ncbi"Diplectanidae"))
 
-    @test !isnothing(dipl_2("Lamellodiscus elegans"))
-    @test isnothing(dipl_2("Gallus gallus"))
+    @test !isnothing(taxon(dipl_2, "Lamellodiscus elegans"))
+    @test isnothing(taxon(dipl_2, "Gallus gallus"))
 
 end

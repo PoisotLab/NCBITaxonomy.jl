@@ -10,3 +10,8 @@ function namefilter(division::Symbol)
     ids = findall(isequal(division), NCBITaxonomy.nodes_table.division_code)
     return namefilter(NCBITaxonomy.nodes_table.tax_id[ids])
 end
+
+function namefilter(division::Vector{Symbol})
+    ids = findall(x -> x in division, NCBITaxonomy.nodes_table.division_code)
+    return namefilter(NCBITaxonomy.nodes_table.tax_id[ids])
+end

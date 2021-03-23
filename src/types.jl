@@ -1,9 +1,17 @@
+"""
+    NCBITaxon
+
+An `NCBITaxon` is minimally defined by its name and its id. Note that across the
+entire package the `name` field is the valid scientific name according to NCBI.
+These objects can be passed to `authority`, `synonyms`, and `vernacular` to get
+other names as strings only.
+"""
 struct NCBITaxon
     name::String
     id::Int
 end
 
-Base.show(io::IO, t::NCBITaxon) = print(io, "$(t.name) ($(t.id))")
+Base.show(io::IO, t::NCBITaxon) = print(io, "$(t.name) (ncbi:$(t.id))")
 
 @enum NCBINameClass begin
     class_scientific_name=1
