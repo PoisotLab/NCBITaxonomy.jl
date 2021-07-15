@@ -4,8 +4,6 @@ _sciname_from_taxid(id::Integer) = _sciname_from_taxid(NCBITaxonomy.names_table,
 function _id_from_name(df::DataFrame, name::AbstractString; strict::Bool=true, dist::Type{SD}=Levenshtein) where {SD <: StringDistance}
     if strict
         positions = findall(isequal(name), df.name)
-        @info name
-        @info positions
         isempty(positions) && return nothing 
         length(positions) == 1 && return df.tax_id[positions[1]]
         # If neither of these are satisfied, the name has multiple matches
