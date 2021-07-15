@@ -7,6 +7,6 @@ using Test
 
 inpartname = "Reptilia" # This is three different taxa
 
-@test_throws ncbi"Reptilia" NCBITaxonomy.NCBIMultipleMatchesException
+@test_throws NCBITaxonomy.NCBIMultipleMatchesException ncbi"Reptilia"
 
 end
