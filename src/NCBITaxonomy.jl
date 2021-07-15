@@ -15,11 +15,16 @@ ispath(taxpath) || mkpath(taxpath)
 
 function __init__()
     name_date = mtime(joinpath(taxpath, "tables", "names.arrow"))
-    time() - name_date >= 2.6e+6 && @warn("Your local taxonomy version is over 30 days old, we recommend using `] build NCBITaxonomy` to get the most recent version.")
+    return time() - name_date >= 2.6e+6 && @warn(
+        "Your local taxonomy version is over 30 days old, we recommend using `] build NCBITaxonomy` to get the most recent version."
+    )
 end
 
 include("types.jl")
 export NCBITaxon, NCBINameClass
+
+include("exceptions.jl")
+export NCBIMultipleMatchesException
 
 names_table = DataFrame(Arrow.Table(joinpath(taxpath, "tables", "names.arrow")))
 names_table.class = NCBINameClass.(names_table.class)
@@ -44,7 +49,16 @@ export taxon, @ncbi_str
 include("namefilters/namefilter.jl")
 include("namefilters/divisions.jl")
 export namefilter
-export bacteriafilter, virusfilter, mammalfilter, vertebratefilter, plantfilter, invertebratefilter, rodentfilter, primatefilter, environmentalsamplesfilter, phagefilter
+export bacteriafilter,
+    virusfilter,
+    mammalfilter,
+    vertebratefilter,
+    plantfilter,
+    invertebratefilter,
+    rodentfilter,
+    primatefilter,
+    environmentalsamplesfilter,
+    phagefilter
 
 include("lineage/children.jl")
 include("lineage/lineage.jl")
