@@ -1,15 +1,22 @@
-struct NCBIMultipleMatchesException <: Exception
+"""
+    MultipleNamesMatched
+
+Throw an exception when the name matches an "in-part" name, *i.e.* a name
+that is associated to multiple resolved taxa in the NCBI backbone. The
+error message will return the names of the components taxa.
+"""
+struct MultipleNamesMatched <: Exception
     name::String
-    taxa::Array{NCBITaxonomy.NCBITaxon}
+    taxa::Vector{NCBITaxonomy.NCBITaxon}
 end
 
-function Base.showerror(io::IO, e::NCBIMultipleMatchesException)
-    message = "The name $(e.name) is an in-part name\n"
-    message *= "It is composed of the following taxa:\n"
+function Base.showerror(io::IO, e::MultipleNamesMatched)
+    message = "The name $(e.name) is an invalid node.\n"
+    message *= "Do you mean\n"
     for taxa in e.taxa
-        message *= "\t$(taxa.name) ($(taxa.id))\n"
+        message *= "→ $(taxa.name) ($(taxa.id))\n"
     end
     message *= "Please pick the correct taxa"
-    return print(io, message)
+    print(io, message)
 end
 

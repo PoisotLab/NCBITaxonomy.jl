@@ -9,7 +9,7 @@ function _id_from_name(df::DataFrame, name::AbstractString; strict::Bool=true, d
         # If neither of these are satisfied, the name has multiple matches
         ids = [df.tax_id[position] for position in positions]
         taxa = [NCBITaxon(_sciname_from_taxid(id), id) for id in ids]
-        throw(NCBIMultipleMatchesException(name, taxa))
+        throw(MultipleNamesMatched(name, taxa))
     else
         correct_name, position = findnearest(name, df.name, dist())
         return df.tax_id[position]

@@ -24,7 +24,7 @@ include("types.jl")
 export NCBITaxon, NCBINameClass
 
 include("exceptions.jl")
-export NCBIMultipleMatchesException
+export MultipleNamesMatched
 
 names_table = DataFrame(Arrow.Table(joinpath(taxpath, "tables", "names.arrow")))
 names_table.class = NCBINameClass.(names_table.class)
