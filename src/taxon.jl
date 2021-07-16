@@ -1,23 +1,45 @@
-_id_from_name(name::AbstractString; kwargs...) = _id_from_name(NCBITaxonomy.names_table, name; kwargs...)
-_sciname_from_taxid(id::Integer) = _sciname_from_taxid(NCBITaxonomy.names_table, id)
+"""
+    taxon(df::DataFrame, id::Integer)
 
-function _id_from_name(df::DataFrame, name::AbstractString; strict::Bool=true, dist::Type{SD}=Levenshtein) where {SD <: StringDistance}
+Returns a fully formed `NCBITaxon` based on its id. The `name` of the taxon
+will be the valid scientic name associated to this id.
+"""
+function taxon(df::DataFrame, id::Integer)
+    matched_indices = findall(isequal(id), df.tax_id)
+    submatches = df[matched_indices, :]
+    @assert NCBITaxonomy.class_scientific_name in submatches.class
+    sciname_position = findfirst(
+        isequal(NCBITaxonomy.class_scientific_name), submatches.class
+    )
+    return NCBITaxon(submatches.name[sciname_position], id)
+end
+
+"""
+    taxon(id::Integer)
+
+Performs a search in the entire taxonomy backbone based on a known ID.
+"""
+taxon(id::Integer) = taxon(NCBITaxonomy.names_table, id)
+
+function _id_from_name(name::AbstractString; kwargs...)
+    return _id_from_name(NCBITaxonomy.names_table, name; kwargs...)
+end
+
+function _id_from_name(
+    df::DataFrame, name::AbstractString; strict::Bool=true, dist::Type{SD}=Levenshtein
+) where {SD<:StringDistance}
     if strict
         positions = findall(isequal(name), df.name)
-        isempty(positions) && return nothing 
+        isempty(positions) && return nothing
         length(positions) == 1 && return df.tax_id[positions[1]]
         # If neither of these are satisfied, the name has multiple matches
         ids = [df.tax_id[position] for position in positions]
-        taxa = [NCBITaxon(_sciname_from_taxid(id), id) for id in ids]
-        throw(MultipleNamesMatched(name, taxa))
+        taxa = taxon.(ids)
+        throw(NameHasMultipleMatches(name, taxa))
     else
         correct_name, position = findnearest(name, df.name, dist())
         return df.tax_id[position]
     end
-end
-
-function _sciname_from_taxid(df::DataFrame, id::Integer)
-    return df.name[findfirst((df.tax_id .== id).&(df.class .== NCBITaxonomy.class_scientific_name))]
 end
 
 """
@@ -43,7 +65,7 @@ with a `namefinder`. Accepts the usual `taxon` keyword arguments.
 function taxon(df::DataFrame, name::AbstractString; kwargs...)
     id = _id_from_name(df, name; kwargs...)
     isnothing(id) && return nothing
-    return NCBITaxon(_sciname_from_taxid(df, id), id)
+    return taxon(df, id)
 end
 
 """

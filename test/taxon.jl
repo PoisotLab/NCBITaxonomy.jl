@@ -3,6 +3,9 @@ module TestTaxon
     using NCBITaxonomy
     using StringDistances
 
+    # Match with a known ID
+    taxon(1234567) == NCBITaxon("Exiligada punctata", 1234567)
+
     # Strict matching with a scientific name
     bos = taxon("Bos taurus")
     @test typeof(bos) == NCBITaxon
