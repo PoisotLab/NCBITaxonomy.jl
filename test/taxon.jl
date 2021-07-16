@@ -33,10 +33,6 @@ module TestTaxon
     @test box.name == "Bos taurus"
     @test box.id == 9913
 
-    # A species that doesn't exist returns nothing
-    fake = taxon("Notus existingensis") # Sweet lord
-    @test isnothing(fake)
-
     #Vernacular name
     chub = vernacular(ncbi"Leuciscus cephalus")
     @test "European chub" in chub

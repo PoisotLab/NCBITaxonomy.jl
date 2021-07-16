@@ -21,7 +21,7 @@ function __init__()
 end
 
 include("types.jl")
-export NCBITaxon, NCBINameClass
+export NCBITaxon, NCBINameClass, IDNotFoundInBackbone
 
 include("exceptions.jl")
 export NameHasNoDirectMatch, NameHasMultipleMatches

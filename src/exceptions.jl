@@ -1,4 +1,18 @@
 """
+    IDNotFoundInBackbone
+
+This exception is thrown when the ID is not found in the current version of the backbone.
+"""
+struct IDNotFoundInBackbone <: Exception
+    id::Integer
+end
+
+function Base.showerror(io::IO, e::IDNotFoundInBackbone)
+    message = "The TAX ID $(e.id) is not in the current version of the backbone."
+    print(io, message)
+end
+
+"""
     NameHasNoDirectMatch
 
 This exception is thrown when the name passed as an argument does not have a

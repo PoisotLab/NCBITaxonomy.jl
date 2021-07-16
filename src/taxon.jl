@@ -6,6 +6,7 @@ will be the valid scientic name associated to this id.
 """
 function taxon(df::DataFrame, id::Integer)
     matched_indices = findall(isequal(id), df.tax_id)
+    isempty(matched_indices) && throw(IDNotFoundInBackbone(id))
     submatches = df[matched_indices, :]
     @assert NCBITaxonomy.class_scientific_name in submatches.class
     sciname_position = findfirst(
@@ -32,8 +33,8 @@ function _id_from_name(
         positions = findall(isequal(name), df.name)
         # If the array is empty, we throw the "no name" error
         isempty(positions) && throw(NameHasNoDirectMatch(name))
-        # If the array is not empty, we return the taxon
-        length(positions) == 1 && return taxon(first(position))
+        # If the array has a single element, this is the ticket
+        length(positions) == 1 && return df.tax_id[first(positions)]
         # If neither of these are satisfied, the name has multiple matches and we throw the appropriate error
         taxa = taxon.(df.tax_id[positions])
         throw(NameHasMultipleMatches(name, taxa))
