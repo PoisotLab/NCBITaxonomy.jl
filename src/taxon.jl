@@ -30,11 +30,12 @@ function _id_from_name(
 ) where {SD<:StringDistance}
     if strict
         positions = findall(isequal(name), df.name)
-        isempty(positions) && return nothing
-        length(positions) == 1 && return df.tax_id[positions[1]]
-        # If neither of these are satisfied, the name has multiple matches
-        ids = [df.tax_id[position] for position in positions]
-        taxa = taxon.(ids)
+        # If the array is empty, we throw the "no name" error
+        isempty(positions) && throw(NameHasNoDirectMatch(name))
+        # If the array is not empty, we return the taxon
+        length(positions) == 1 && return taxon(first(position))
+        # If neither of these are satisfied, the name has multiple matches and we throw the appropriate error
+        taxa = taxon.(df.tax_id[positions])
         throw(NameHasMultipleMatches(name, taxa))
     else
         correct_name, position = findnearest(name, df.name, dist())
