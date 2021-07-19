@@ -31,17 +31,17 @@ function _id_from_name(
     name::AbstractString;
     strict::Bool=true,
     dist::Type{SD}=Levenshtein,
-    lowercase::Bool=false,
+    casesensitive::Bool=true,
     rank::Union{Nothing,Symbol}=nothing,
 ) where {SD<:StringDistance}
     if !isnothing(rank)
         @assert rank ∈ unique(NCBITaxonomy.nodes_table)
     end
     if strict
-        positions = if lowercase
-            findall(isequal(name), df.lowercase)
-        else
+        positions = if casesensitive
             findall(isequal(name), df.name)
+        else
+            findall(isequal(lowercase(name)), df.lowercase)
         end
         # If the array is empty, we throw the "no name" error
         isempty(positions) && throw(NameHasNoDirectMatch(name))
@@ -67,7 +67,7 @@ The keywords are:
 
 - `strict` (def. `true`), allows fuzzy matching
 - `dist` (def. `Levenshtein`), the string distance function to use
-- `lowercase` (def. `false`), whether to strict match on lowercased names
+- `casesensitive` (def. `true`), whether to strict match on lowercased names
 - `rank` (def. `nothing`), the taxonomic rank to limit the search
 """
 taxon(name::AbstractString; kwargs...) = taxon(NCBITaxonomy.names_table, name; kwargs...)
