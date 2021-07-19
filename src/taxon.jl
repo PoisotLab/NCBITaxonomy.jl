@@ -35,7 +35,8 @@ function _id_from_name(
     rank::Union{Nothing,Symbol}=nothing,
 ) where {SD<:StringDistance}
     if !isnothing(rank)
-        @assert rank ∈ unique(NCBITaxonomy.nodes_table)
+        @assert rank ∈ unique(df.rank)
+        df = df[findall(isequal(rank), df.rank),:]
     end
     if strict
         positions = if casesensitive

@@ -49,4 +49,9 @@ module TestTaxon
     @test "Bos bovis" in synonyms(ncbi"Bos taurus")
     @test isnothing(synonyms(ncbi"Lamellodiscus elegans"))
 
+    # Limit by rank
+    @test_throws AssertionError taxon("Lamellodiscus"; rank=:specs)
+    @test_throws NameHasNoDirectMatch taxon("Lamellodiscus"; rank=:species)
+    @test typeof(taxon("Lamellodiscus"; rank=:genus)) <: NCBITaxon
+
 end
