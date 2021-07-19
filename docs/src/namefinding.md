@@ -55,14 +55,11 @@ Note that fuzzy searching comes at a performance cost, so it is preferable to
 use the strict matching unless necessary. As a final note, you can specify any
 distance function from the `StringDistances` package, using the `dist` argument.
 
-## Ambiguous names
+## Errors
 
-Some nodes in the NCBI backbone match to several taxa. In this case,
-`NCBITaxonomy` will return a `NCBIMultipleMatchesException`, with a list of
-matching taxa:
-
-```@example taxid
-ncbi"Reptilia"
+```@docs
+NameHasNoDirectMatch
+NameHasMultipleMatches
 ```
 
 
