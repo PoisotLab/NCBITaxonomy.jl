@@ -34,11 +34,15 @@ function _id_from_name(
     lowercase::Bool=false,
     rank::Union{Nothing,Symbol}=nothing,
 ) where {SD<:StringDistance}
-    if !isnothing(rank) 
+    if !isnothing(rank)
         @assert rank ∈ unique(NCBITaxonomy.nodes_table)
     end
     if strict
-        positions = lowercase ? findall(isequal(name), df.lowercase) : findall(isequal(name), df.name)
+        positions = if lowercase
+            findall(isequal(name), df.lowercase)
+        else
+            findall(isequal(name), df.name)
+        end
         # If the array is empty, we throw the "no name" error
         isempty(positions) && throw(NameHasNoDirectMatch(name))
         # If the array has a single element, this is the ticket
