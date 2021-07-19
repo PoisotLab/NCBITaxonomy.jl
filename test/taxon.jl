@@ -6,9 +6,9 @@ module TestTaxon
     # Match with a known ID
     @test taxon(1234567) == NCBITaxon("Exiligada punctata", 1234567)
 
-    # Match with a lowercase search
+    # Match with a case insensitive search
     @test_throws NameHasNoDirectMatch taxon("exiligada punctata") 
-    @test taxon("exiligada punctata"; lowercase=true) == NCBITaxon("Exiligada punctata", 1234567)
+    @test taxon("exiligada punctata"; casesensitive=false) == NCBITaxon("Exiligada punctata", 1234567)
 
     # Strict matching with a scientific name
     bos = taxon("Bos taurus")
