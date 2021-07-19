@@ -27,10 +27,18 @@ function _id_from_name(name::AbstractString; kwargs...)
 end
 
 function _id_from_name(
-    df::DataFrame, name::AbstractString; strict::Bool=true, dist::Type{SD}=Levenshtein
+    df::DataFrame,
+    name::AbstractString;
+    strict::Bool=true,
+    dist::Type{SD}=Levenshtein,
+    lowercase::Bool=false,
+    rank::Union{Nothing,Symbol}=nothing,
 ) where {SD<:StringDistance}
+    if !isnothing(rank) 
+        @assert rank ∈ unique(NCBITaxonomy.nodes_table)
+    end
     if strict
-        positions = findall(isequal(name), df.name)
+        positions = lowercase ? findall(isequal(name), df.lowercase) : findall(isequal(name), df.name)
         # If the array is empty, we throw the "no name" error
         isempty(positions) && throw(NameHasNoDirectMatch(name))
         # If the array has a single element, this is the ticket
@@ -55,6 +63,8 @@ The keywords are:
 
 - `strict` (def. `true`), allows fuzzy matching
 - `dist` (def. `Levenshtein`), the string distance function to use
+- `lowercase` (def. `false`), whether to strict match on lowercased names
+- `rank` (def. `nothing`), the taxonomic rank to limit the search
 """
 taxon(name::AbstractString; kwargs...) = taxon(NCBITaxonomy.names_table, name; kwargs...)
 

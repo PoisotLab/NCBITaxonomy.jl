@@ -4,7 +4,11 @@ module TestTaxon
     using StringDistances
 
     # Match with a known ID
-    taxon(1234567) == NCBITaxon("Exiligada punctata", 1234567)
+    @test taxon(1234567) == NCBITaxon("Exiligada punctata", 1234567)
+
+    # Match with a lowercase search
+    @test_throws NameHasNoDirectMatch taxon("exiligada punctata") 
+    @test taxon("exiligada punctata"; lowercase=true) == NCBITaxon("Exiligada punctata", 1234567)
 
     # Strict matching with a scientific name
     bos = taxon("Bos taurus")

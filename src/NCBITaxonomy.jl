@@ -28,6 +28,7 @@ export NameHasNoDirectMatch, NameHasMultipleMatches
 
 names_table = DataFrame(Arrow.Table(joinpath(taxpath, "tables", "names.arrow")))
 names_table.class = NCBINameClass.(names_table.class)
+names_table.lowercase = lowercase.(names_table.name)
 
 division_table = DataFrame(Arrow.Table(joinpath(taxpath, "tables", "division.arrow")))
 select!(division_table, Not(:comments))
