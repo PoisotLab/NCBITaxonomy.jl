@@ -1,18 +1,60 @@
-_id_from_name(name::AbstractString; kwargs...) = _id_from_name(NCBITaxonomy.names_table, name; kwargs...)
-_sciname_from_taxid(id::Integer) = _sciname_from_taxid(NCBITaxonomy.names_table, id)
+"""
+    taxon(df::DataFrame, id::Integer)
 
-function _id_from_name(df::DataFrame, name::AbstractString; strict::Bool=true, dist::Type{SD}=Levenshtein) where {SD <: StringDistance}
+Returns a fully formed `NCBITaxon` based on its id. The `name` of the taxon
+will be the valid scientic name associated to this id.
+"""
+function taxon(df::DataFrame, id::Integer)
+    matched_indices = findall(isequal(id), df.tax_id)
+    isempty(matched_indices) && throw(IDNotFoundInBackbone(id))
+    submatches = df[matched_indices, :]
+    @assert NCBITaxonomy.class_scientific_name in submatches.class
+    sciname_position = findfirst(
+        isequal(NCBITaxonomy.class_scientific_name), submatches.class
+    )
+    return NCBITaxon(submatches.name[sciname_position], id)
+end
+
+"""
+    taxon(id::Integer)
+
+Performs a search in the entire taxonomy backbone based on a known ID.
+"""
+taxon(id::Integer) = taxon(NCBITaxonomy.names_table, id)
+
+function _id_from_name(name::AbstractString; kwargs...)
+    return _id_from_name(NCBITaxonomy.names_table, name; kwargs...)
+end
+
+function _id_from_name(
+    df::DataFrame,
+    name::AbstractString;
+    strict::Bool=true,
+    dist::Type{SD}=Levenshtein,
+    casesensitive::Bool=true,
+    rank::Union{Nothing,Symbol}=nothing,
+) where {SD<:StringDistance}
+    if !isnothing(rank)
+        @assert rank ∈ unique(df.rank)
+        df = df[findall(isequal(rank), df.rank),:]
+    end
     if strict
-        position = findfirst(isequal(name), df.name)
-        return isnothing(position) ? nothing : df.tax_id[position]
+        positions = if casesensitive
+            findall(isequal(name), df.name)
+        else
+            findall(isequal(lowercase(name)), df.lowercase)
+        end
+        # If the array is empty, we throw the "no name" error
+        isempty(positions) && throw(NameHasNoDirectMatch(name))
+        # If the array has a single element, this is the ticket
+        length(positions) == 1 && return df.tax_id[first(positions)]
+        # If neither of these are satisfied, the name has multiple matches and we throw the appropriate error
+        taxa = taxon.(df.tax_id[positions])
+        throw(NameHasMultipleMatches(name, taxa))
     else
         correct_name, position = findnearest(name, df.name, dist())
         return df.tax_id[position]
     end
-end
-
-function _sciname_from_taxid(df::DataFrame, id::Integer)
-    return df.name[findfirst((df.tax_id .== id).&(df.class .== NCBITaxonomy.class_scientific_name))]
 end
 
 """
@@ -26,6 +68,8 @@ The keywords are:
 
 - `strict` (def. `true`), allows fuzzy matching
 - `dist` (def. `Levenshtein`), the string distance function to use
+- `casesensitive` (def. `true`), whether to strict match on lowercased names
+- `rank` (def. `nothing`), the taxonomic rank to limit the search
 """
 taxon(name::AbstractString; kwargs...) = taxon(NCBITaxonomy.names_table, name; kwargs...)
 
@@ -38,7 +82,7 @@ with a `namefinder`. Accepts the usual `taxon` keyword arguments.
 function taxon(df::DataFrame, name::AbstractString; kwargs...)
     id = _id_from_name(df, name; kwargs...)
     isnothing(id) && return nothing
-    return NCBITaxon(_sciname_from_taxid(df, id), id)
+    return taxon(df, id)
 end
 
 """

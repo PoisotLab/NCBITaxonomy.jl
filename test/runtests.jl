@@ -3,6 +3,7 @@ using Test
 
 my_tests = [
    "taxon.jl",
+   "exceptions.jl",
    "lineages.jl",
    "rank.jl",
    "namefinders.jl",

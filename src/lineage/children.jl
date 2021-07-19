@@ -3,7 +3,7 @@
 
 Internal function to retrieve the id of the children of a given node.
 """
-function _children(id::T) where {T <: Int}
+function _children(id::T) where {T<:Int}
     positions = findall(isequal(id), NCBITaxonomy.nodes_table.parent_tax_id)
     return NCBITaxonomy.nodes_table.tax_id[positions]
 end
@@ -13,13 +13,13 @@ end
 
 Recursively get the descendants of a given node.
 """
-function _descendants(id::T) where {T <: Int}
+function _descendants(id::T) where {T<:Int}
     c = _children(id)
     isempty(c) && return id
     return vcat(id, _descendants(c)...)
 end
 
-_descendants(ids::Vector{T}) where {T <: Int} = map(_descendants, ids)
+_descendants(ids::Vector{T}) where {T<:Int} = map(_descendants, ids)
 
 """
     children(t::NCBITaxon)
@@ -27,7 +27,7 @@ _descendants(ids::Vector{T}) where {T <: Int} = map(_descendants, ids)
 Returns the node immediately below the taxon given as argument, or `nothing` if
 the taxon is terminal.
 """
-children(t::NCBITaxon) = [NCBITaxon(NCBITaxonomy._sciname_from_taxid(i), i) for i in _children(t.id)]
+children(t::NCBITaxon) = taxon.(_children(t.id))
 
 """
     descendants(t::NCBITaxon)
@@ -39,7 +39,7 @@ considered, this can be a long function to run.
 function descendants(t::NCBITaxon)
     c = _descendants(t.id)
     filter!(!isequal(t.id), c)
-    return [NCBITaxon(NCBITaxonomy._sciname_from_taxid(i), i) for i in c]
+    return taxon.(c)
 end
 
 """

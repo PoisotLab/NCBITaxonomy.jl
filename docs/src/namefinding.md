@@ -55,6 +55,14 @@ Note that fuzzy searching comes at a performance cost, so it is preferable to
 use the strict matching unless necessary. As a final note, you can specify any
 distance function from the `StringDistances` package, using the `dist` argument.
 
+## Errors
+
+```@docs
+NameHasNoDirectMatch
+NameHasMultipleMatches
+```
+
+
 ## Building a better namefilter
 
 The `taxon` function, by default, searches in the entire names table. In many

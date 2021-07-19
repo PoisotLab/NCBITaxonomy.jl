@@ -13,6 +13,6 @@ module TestNamefinders
     dipl_2 = namefilter(descendants(ncbi"Diplectanidae"))
 
     @test !isnothing(taxon(dipl_2, "Lamellodiscus elegans"))
-    @test isnothing(taxon(dipl_2, "Gallus gallus"))
+    @test_throws NameHasNoDirectMatch taxon(dipl_2, "Gallus gallus")
 
 end

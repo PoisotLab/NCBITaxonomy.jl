@@ -1,7 +1,7 @@
 name = "NCBITaxonomy"
 uuid = "f88b31d2-eb98-4433-b52d-2dd32bc6efce"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 Arrow = "69666777-d1a9-59fb-9406-91d4454c9d45"
@@ -18,4 +18,4 @@ GZip = "0.5"
 MD5 = "0.2"
 StringDistances = "0.10"
 Tar = "1.8"
-julia = "1.4"
+julia = "1.5"

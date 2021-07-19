@@ -3,6 +3,13 @@ module TestTaxon
     using NCBITaxonomy
     using StringDistances
 
+    # Match with a known ID
+    @test taxon(1234567) == NCBITaxon("Exiligada punctata", 1234567)
+
+    # Match with a case insensitive search
+    @test_throws NameHasNoDirectMatch taxon("exiligada punctata") 
+    @test taxon("exiligada punctata"; casesensitive=false) == NCBITaxon("Exiligada punctata", 1234567)
+
     # Strict matching with a scientific name
     bos = taxon("Bos taurus")
     @test typeof(bos) == NCBITaxon
@@ -30,10 +37,6 @@ module TestTaxon
     @test box.name == "Bos taurus"
     @test box.id == 9913
 
-    # A species that doesn't exist returns nothing
-    fake = taxon("Notus existingensis") # Sweet lord
-    @test isnothing(fake)
-
     #Vernacular name
     chub = vernacular(ncbi"Leuciscus cephalus")
     @test "European chub" in chub
@@ -45,5 +48,10 @@ module TestTaxon
     # Synonyms
     @test "Bos bovis" in synonyms(ncbi"Bos taurus")
     @test isnothing(synonyms(ncbi"Lamellodiscus elegans"))
+
+    # Limit by rank
+    @test_throws AssertionError taxon("Lamellodiscus"; rank=:specs)
+    @test_throws NameHasNoDirectMatch taxon("Lamellodiscus"; rank=:species)
+    @test typeof(taxon("Lamellodiscus"; rank=:genus)) <: NCBITaxon
 
 end
