@@ -5,15 +5,17 @@ module TestDivisionFilters
 
     @test typeof(taxon(virusfilter(), "Ebolavirus")) <: NCBITaxon
     @test typeof(taxon(plantfilter(), "Acer")) <: NCBITaxon
-    @test isnothing(taxon(mammalfilter(false), "Homo"))
-    @test isnothing(taxon(mammalfilter(false), "Mus"))
-    @test !isnothing(taxon(mammalfilter(true), "Mus"))
-    @test !isnothing(taxon(rodentfilter(), "Mus"))
-    @test isnothing(taxon(vertebratefilter(false), "Homo"))
-    @test !isnothing(taxon(vertebratefilter(true), "Homo"))
-    @test !isnothing(taxon(primatefilter(), "Homo"))
-    @test !isnothing(taxon(vertebratefilter(true), "Homo"))
-    @test !isnothing(taxon(bacteriafilter(), "Pseudomonas"))
-    @test !isnothing(taxon(invertebratefilter(), "Lamellodiscus"))
+   
+    @test_throws NameHasNoDirectMatch taxon(mammalfilter(false), "Homo")
+    @test_throws NameHasNoDirectMatch taxon(mammalfilter(false), "Mus musculus")
+    @test_throws NameHasNoDirectMatch taxon(vertebratefilter(false), "Homo")
+    
+    @test typeof(taxon(vertebratefilter(true), "Homo")) <: NCBITaxon
+    @test typeof(taxon(primatefilter(), "Homo")) <: NCBITaxon
+    @test typeof(taxon(vertebratefilter(true), "Homo")) <: NCBITaxon
+    @test typeof(taxon(bacteriafilter(), "Pseudomonas")) <: NCBITaxon
+    @test typeof(taxon(invertebratefilter(), "Lamellodiscus")) <: NCBITaxon
+    @test typeof(taxon(mammalfilter(true), "Mus musculus")) <: NCBITaxon
+    @test typeof(taxon(rodentfilter(), "Mus musculus")) <: NCBITaxon
 
 end
