@@ -38,15 +38,21 @@ cleanup = DataFrame(
 )
 ```
 
-The next step is to loop throug the species, and figure out what to do with
-them:
+The next step is to loop through the species, and figure out what to do
+with them:
 
 ```@example portal
 for sp in species
     portal_name = sp["species"] == "sp." ? sp["genus"] : sp["genus"]*" "*sp["species"]
-    ncbi_tax = taxon(portal_name)
-    if isnothing(ncbi_tax)
-        ncbi_tax = taxon(portal_name; strict=false)
+    local ncbi_tax
+    try
+        ncbi_tax = taxon(portal_name)
+    catch y
+        if isa(y, NameHasNoDirectMatch)
+            ncbi_tax = taxon(portal_name; strict=false)
+        else
+            continue
+        end
     end
     ncbi_lin = lineage(ncbi_tax)
     push!(cleanup,
@@ -71,11 +77,11 @@ vernacular, or spelling issues:
 filter(r -> r.portal != r.name, cleanup)
 ```
 
-Note that these results should *always* be manually curated. For example, two
-species have been assigned to groups that are *obviously* wrong:
+Note that these results should *always* be manually curated. For example,
+some species have been match to *Hemiptera*, which sounds suspect:
 
 ```@example portal
-filter(r -> r.order ∈ ["Gentianales","Hemiptera"], cleanup)
+filter(r -> r.order ∈ ["Hemiptera"], cleanup)
 ```
 
 ## Fixing the mis-identified species
@@ -92,31 +98,6 @@ the `vertebratefinder` function to restrict the search to these groups:
 vert = vertebratefilter(true) # We want taxa that are specific divisions of vertebrates as well
 taxon(vert, "Lizard"; strict=false)
 ```
-
-However, this approach does not seem to work for the second group:
-
-```@example portal
-taxon(vert, "Perognathus hispidus"; strict=false)
-```
-
-## The mystery of the hispid pocket mouse
-
-This one will not be solved by our approach, as it is an invalid name --
-*Perognathus hispidus* should actually be *Chaetodipus hispidus*. Here are the
-list of issues that result in this name not being identifiable easily. First,
-*Chaetodipus* is a valid name, for which *Perognathus* is not a synonym. So
-searching by genus is not going to help. Second, there are a whole lot of
-species that end with *hispidus*, and trying different string distances is not
-going to help. We can try:
-
-```@example portal
-taxon(vert, "Perognathus hispidus"; strict=false, dist=DamerauLevenshtein) |> vernacular
-```
-
-This returns a valid taxon, but an incorrect one. There is no obvious way to
-solve this problem. There are techniques relying on code generation, or
-dispatching on values, but they are probably not going to be as general as a
-good lookup table to correct the names that are knwon to be problematic.
 
 ## Wrapping-up
 
