@@ -13,41 +13,41 @@ The `taxon` function will return a `NCBITaxon` object, which has two fields:
 `name` and `id`. We do not return the `class` attribute, because the package
 will always return the scientific name, as the examples below illustrate:
 
-```@example taxid
+```@example taxon
 using NCBITaxonomy
-taxid("Bos taurus")
+taxon("Bos taurus")
 ```
 
-There is a convenience string macro to replace the `taxid` function:
+There is a convenience string macro to replace the `taxon` function:
 
-```@example taxid
+```@example taxon
 ncbi"Bos taurus"
 ```
 
 Note that because the names database contains vernacular and deprecated names,
 the *scientific name* will be returned, no matter what you search
 
-```@example taxid
-taxid("cow")
+```@example taxon
+taxon("cow")
 ```
 
 This may be a good point to note that we can use the `vernacular` function to
 get a list of NCBI-known vernacular names:
 
-```@example taxid
-taxid("cow") |> vernacular
+```@example taxon
+taxon("cow") |> vernacular
 ```
 
 It also work with authorities:
 
-```@example taxid
-taxid("cow") |> authority
+```@example taxon
+taxon("cow") |> authority
 ```
 
 You can pass an additional `strict=false` keyword argument to the `taxon`
 function to perform fuzzy name matching using the Levenshtein distance:
 
-```@example taxid
+```@example taxon
 taxon("Paradiplozon homion", strict=false)
 ```
 
@@ -79,13 +79,13 @@ namefilter
 Here is an illustration of why using namefilters makes sense. Let's say we have
 to search for a potentially misspelled name:
 
-```@example taxid
+```@example taxon
 @time taxon("Ebulavurus"; strict=false);
 ```
 
 We can use the `virusfilter()` function to generate a table with viruses only:
 
-```@example taxid
+```@example taxon
 viruses = virusfilter()
 @time taxon(viruses, "Bumbulu ebolavirus"; strict=false);
 ```
@@ -93,7 +93,7 @@ viruses = virusfilter()
 A `namefilter` can be built in a number of ways, including by passing a list of
 taxa:
 
-```@example taxid
+```@example taxon
 diplectanids = namefilter(descendants(ncbi"Diplectanidae"))
 taxon(diplectanids, "Lamellodiscus")
 ```

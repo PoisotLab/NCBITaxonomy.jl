@@ -23,4 +23,5 @@ jobs:
       - name: Build and deploy
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }} # For authentication with GitHub Actions token
+          GKSwstype: nul
         run: julia --project=docs/ docs/make.jl
