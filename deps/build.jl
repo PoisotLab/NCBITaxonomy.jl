@@ -65,7 +65,7 @@ ispath(tables) || mkpath(tables)
 
 include(joinpath(@__DIR__, "..", "src", "types.jl"))
 
-function _class_to_enum(c::T) where { T <: String}
+function _class_to_enum(c::T) where {T <: String}
     c = replace(c, " " => "_")
     c = replace(c, "-" => "_")
     return getproperty(@__MODULE__, Symbol("class_$(c)"))
