@@ -34,9 +34,3 @@ function authority(t::NCBITaxon)
     p = findall(isequal(NCBITaxonomy.class_authority), x.class)
     return length(p) == 0 ? nothing : first(x.name[p])
 end
-
-"""
-"""
-function similarnames(name::AbstractString)
-    return nothing
-end

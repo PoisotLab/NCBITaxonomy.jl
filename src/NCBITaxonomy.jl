@@ -70,7 +70,9 @@ include("lineage/lineage.jl")
 export children, descendants, lineage, parent, rank
 
 include("utility/nametools.jl")
+include("utility/similarnames.jl")
 include("utility/taxonomicdistance.jl")
 export vernacular, synonyms, authority, taxonomicdistance, taxonomicdistance!
+export similarnames
 
 end
