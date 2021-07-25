@@ -16,13 +16,27 @@ string `"mouse"` will match both the vernacular for Bryophyta (`"mosses"`) and
 its synonym (`"Musci"`) with an equal dissimilarity under the Levenshtein
 distance - the pair will be returned only once.
 """
-function similarnames(name::AbstractString; dist::Type{SD}=Levenshtein, threshold::Float64=0.8) where {SD <: StringDistance}
-    distance_matches = findall(name, NCBITaxonomy.names_table.name, dist(); min_score=threshold)
-    _names = NCBITaxonomy.names_table.name[distance_matches]
-    _ids = NCBITaxonomy.names_table.tax_id[distance_matches]
+function similarnames(df::DataFrame, name::AbstractString; dist::Type{SD}=Levenshtein, threshold::Float64=0.8) where {SD <: StringDistance}
+    distance_matches = findall(name, df.name, dist(); min_score=threshold)
+    _names = df.name[distance_matches]
+    _ids = df.tax_id[distance_matches]
     _distances = [compare(name, _name, dist()) for _name in _names]
     _taxa = taxon.(_ids)
     _choices = [Pair(_taxa[i], _distances[i]) for i in 1:length(_taxa)]
     sort!(_choices; by=(x) -> x.second, rev=true)
     return unique(_choices)
+end
+
+function similarnames(name::AbstractString; kwargs...)
+    df = NCBITaxonomy.names_table
+    return similarnames(df, name; kwargs...)
+end
+
+function alternativetaxa(df::DataFrame, name::AbstractString)
+    @info name
+end
+
+function alternativetaxa(name::AbstractString; kwargs...)
+    df = NCBITaxonomy.names_table
+    return alternativetaxa(df, name; kwargs...)
 end

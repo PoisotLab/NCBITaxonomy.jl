@@ -73,6 +73,6 @@ include("utility/nametools.jl")
 include("utility/similarnames.jl")
 include("utility/taxonomicdistance.jl")
 export vernacular, synonyms, authority, taxonomicdistance, taxonomicdistance!
-export similarnames
+export similarnames, alternativetaxa
 
 end
