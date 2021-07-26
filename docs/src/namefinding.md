@@ -7,6 +7,8 @@ taxon
 vernacular
 synonyms
 authority
+alternativetaxa
+similarnames
 ```
 
 The `taxon` function will return a `NCBITaxon` object, which has two fields:
@@ -61,7 +63,6 @@ distance function from the `StringDistances` package, using the `dist` argument.
 NameHasNoDirectMatch
 NameHasMultipleMatches
 ```
-
 
 ## Building a better namefilter
 
