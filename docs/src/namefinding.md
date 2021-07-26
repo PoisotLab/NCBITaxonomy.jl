@@ -57,6 +57,20 @@ Note that fuzzy searching comes at a performance cost, so it is preferable to
 use the strict matching unless necessary. As a final note, you can specify any
 distance function from the `StringDistances` package, using the `dist` argument.
 
+Some valid names refer to more than one entry in the NCBI taxonomy. This is, for
+example, the case for *Mus* (the genus and the sub-genus):
+
+```@example taxon
+alternativetaxa("Mus")
+```
+
+In some cases, the fuzzy matched name may not be the one you want. There is a
+function to get the names ordered by similarity:
+
+```@example taxon
+similarnames("mouse"; threshold=0.6)
+```
+
 ## Errors
 
 ```@docs
