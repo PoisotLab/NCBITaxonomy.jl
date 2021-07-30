@@ -28,6 +28,7 @@ function Base.showerror(io::IO, e::NameHasNoDirectMatch)
     message *= "Possible fixes are\n"
     message *= "→ do a lowercase search with `lowercase=true`\n"
     message *= "→ do a fuzzy search with `strict=false`\n"
+    message *= "→ look at the output of `similarnames(\"$(e.name)\")`"
     print(io, message)
 end
 
@@ -52,7 +53,8 @@ function Base.showerror(io::IO, e::NameHasMultipleMatches)
     for taxa in e.taxa
         message *= "→ the $(rank(taxa)) $(taxa)\n"
     end
-    message *= "Please pick the correct taxa"
+    message *= "Please pick the correct taxa\n"
+    message *= "You can get a list of correct taxa using `alternativetaxa(\"$(e.name)\")`\n"
     print(io, message)
 end
 

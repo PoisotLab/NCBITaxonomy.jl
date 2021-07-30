@@ -59,7 +59,7 @@ module TestTaxon
     @test taxon(862507) in alternativetaxa("Mus") 
 
     # Check the pairs
-    @test taxon(10088) => 1.0 in similarnames("mouse")
-    @test taxon(10090) => 1.0 in similarnames("mouse")
+    @test Pair(taxon(10088), 1.0) in similarnames("mouse")
+    @test Pair(taxon(10090), 1.0) in similarnames("mouse")
 
 end
