@@ -24,10 +24,10 @@ struct NameHasNoDirectMatch <: Exception
 end
 
 function Base.showerror(io::IO, e::NameHasNoDirectMatch)
-    message = "The name $(e.name) has no direct match"
-    message *= "Possible fixes are"
-    message *= "→ do a lowercase search with `lowercase=true`"
-    message *= "→ do a fuzzy search with `strict=false`"
+    message = "The name $(e.name) has no direct match\n"
+    message *= "Possible fixes are\n"
+    message *= "→ do a lowercase search with `lowercase=true`\n"
+    message *= "→ do a fuzzy search with `strict=false`\n"
     print(io, message)
 end
 
