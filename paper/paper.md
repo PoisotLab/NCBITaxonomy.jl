@@ -4,6 +4,8 @@ tags:
   - Julia
   - biodiversity
   - taxonomy
+  - NCBI
+  - fuzzy matching
 authors:
   - name: Timothée Poisot
     orcid: 0000-0002-0735-5184
@@ -11,7 +13,7 @@ authors:
 affiliations:
  - name: Université de Montréal, Départment de Sciences Biologiques, Montréal QC, CANADA
    index: 1
-date: Feb. 9, 2021
+date: Jul. 30, 2021
 bibliography: paper.bib
 ---
 

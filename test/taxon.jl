@@ -54,4 +54,12 @@ module TestTaxon
     @test_throws NameHasNoDirectMatch taxon("Lamellodiscus"; rank=:species)
     @test typeof(taxon("Lamellodiscus"; rank=:genus)) <: NCBITaxon
 
+    # Check with multiple names
+    @test taxon(10088) in alternativetaxa("Mus") 
+    @test taxon(862507) in alternativetaxa("Mus") 
+
+    # Check the pairs
+    @test Pair(taxon(10088), 1.0) in similarnames("mouse")
+    @test Pair(taxon(10090), 1.0) in similarnames("mouse")
+
 end
