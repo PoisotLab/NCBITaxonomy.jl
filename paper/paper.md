@@ -19,9 +19,23 @@ bibliography: paper.bib
 
 # Summary
 
-@Norman2020TaxHig `taxadb`
-
 # Statement of need
+
+Identifying species in an inambiguous way is a far more challenging task than it
+may appears. There are a number of reasons for this. First, different databases
+keep different taxonomic "backbones", *i.e.* the data structure mapping both
+species to names, and hierarchy of species. Second, not all names are unique
+identifiers to groups; for example, the genus *Io* can either refer to plants
+from the aster family, or to a genus of molluscs; the genus *Mus* (of which the
+house mouse *Mus musculus* is a species), contains a sub-genus *also* named
+*Mus*. Finally, most taxa name are at some point manually typed, and this
+introduces the potential for typos; it is likely that many biologists will
+stumble when attempting to write down the (perfectly valid) names of the
+bacterial isolate known as *Myxococcus
+llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogochensis*, or of the
+flatworm *Pseudorhabdosynochus hyphessometochus*.
+
+@Norman2020TaxHig `taxadb`
 
 @Gibb2021DatPro allowed to generate *clover*
 
