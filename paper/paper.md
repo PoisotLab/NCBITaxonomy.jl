@@ -19,6 +19,13 @@ bibliography: paper.bib
 
 # Summary
 
+`NCBITaxonomy.jl` is a package designed to facilitate the reconciliation and
+cleaning of taxonomic names, using a *local* copy of the NCBI taxonomic backbone
+[@Federhen2012NcbTax; @Schoch2020NcbTax]; The basic search functions are coupled
+with quality-of-life functions including case-insensitive search and custom
+fuzzy string matching to facilitate the amount of information that can be
+extracted automatically, while allowing efficient manual curation and inspection
+of results.
 # Statement of need
 
 Identifying species in an inambiguous way is a far more challenging task than it
