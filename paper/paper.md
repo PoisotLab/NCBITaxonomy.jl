@@ -90,7 +90,7 @@ will be created if it doesn't exist, and will be used to store the raw taxonomic
 table
 ENV["NCBITAXONOMY_PATH"] = joinpath(homedir(), "data", "NCBITaxonomy.jl")
 
-Pkg.add("NCBITaxonomy")
+Pkg.add("NCBITaxonomy") # Dowloading the files may take a long time
 ~~~
 
 The package will download the most recent version of the NCBI taxonomy database,
@@ -98,12 +98,54 @@ and transform in into a set of Apache Arrow files ready for use.
 
 ## Improved name matching
 
+The name finding is primarily done through the `taxon` function, which admits
+either a unique NCBI identifier (*e.g.* `taxon(36219)` for the bogue *Boops
+boops*), a string (`taxon("Boops boops")`), or a data frame with a restricted
+list of names (see the next section). The `taxon` method has additional
+arguments to perform fuzzy matching in order to catch possible typos
+(`taxon("Boops bops"; strict=false)`), to perform a lowercase search (useful
+when alphanumeric codes are part of the taxon name, like for some viruses), and
+to restrict the the search to a specific taxonomic rank.
+
+The `taxon` function will either return a `NCBITaxon` object (made of a `name`
+and `id`), or throw either a `NameHasNoDirectMatch` (with instructions about how
+to possible solve it, using the `similarnames` function), or a
+`NameHasMultipleMatches` (listing the possible valid matches, and suggesting to
+use `alternativetaxa` to find the correct one). These functions will not demand
+any user input in the form of key presses (though they can be wrapped in
+additional code to allow it), as they are intended to run on clusters without
+supervision. The `taxon` function has good scaling using muliple threads.
 
 ## Name filtering functions
 
+As the full NCBI names table has over 3 million entries at the time of writing,
+we have provided a number of functions to restrict the scope of names that are
+searched. These are driven by the NCBI *divisions*; for example `nf =
+mammalfinder(true)` will return a data frame containing the names of mammals,
+inclusive of rodentds and primates, and can be used with *e.g.* `taxon(nf,
+"Pan")`. This has the dual advantage of making search faster, but also of
+avoiding matching on names that are shared by another taxonomic group.
+
 ## Quality of life functions
 
+In order to facilitate working with names, we provide the `authority` function
+(gives the full taxonomic authority for a name), `synonyms` (to get alternative
+valid names), `vernacular` (for English common names), and `rank` (for the
+taxonomic rank).
+
 ## Taxonomic lineages navigation
+
+The `children` function will return all nodes that are directly descended from a
+taxon; the `descendants` function will recursively apply this function to all
+descendants of these nodes, until only terminal leaves are reached. The `parent`
+function is an "upwards" equivalent, giving that taxon from which a taxon
+descents; the `lineage` function chains calls to `parent` until either
+`taxon(1)` (the taxonomy root) or an arbitrary ancestor is reached.
+
+The `taxonomicdistance` function (and its in-place equivalent,
+`taxonomicdistance!`) uses the @Shimatani2001MeaSpe approach to reconstruct a
+matrix of distances based on taxonomy, which can serve as a rough proxy when no
+phylogenies are available.
 
 **Acknowledgements:** TP was supported by funding to the Viral Emergence
 Research Initiative (VERENA) consortium including NSF BII 2021909 and a grant
