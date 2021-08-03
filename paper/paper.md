@@ -195,7 +195,10 @@ that search are conducted within the appropriate NCBI division, and (ii) only
 rely on fuzzy matching when the strict or lowercase match fails to return a
 name, as fuzzy matching can result in order of magnitude more run time and
 memory footprint. These numbers were obtained on a single Intel i7-8665U CPU (@
-(1.90GHz).
+(1.90GHz). Using `"chimpanzees"` as the search string (the NCBI recognized
+vernacular for *Pan*) gave qualitatively similar results, suggesting that there
+is no performance cost associated with working with synonyms or verncular input
+data.
 
 ## Quality of life functions
 
