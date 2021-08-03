@@ -124,7 +124,11 @@ Pkg.add("NCBITaxonomy") # Dowloading the files may take a long time
 ~~~
 
 The package will download the most recent version of the NCBI taxonomy database,
-and transform in into a set of Apache Arrow files ready for use.
+and transform in into a set of Apache Arrow files ready for use. Note that the
+`NCBITAXONOMY_PATH` can specified on a per-project basis, and as long as the
+package is not re-built, the local set of tables downloaded from NCBI will not
+change; this way, users can re-run an analysis with a guarantee that the
+underlying taxonomic backbone has not changed.
 
 ## Improved name matching
 
