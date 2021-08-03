@@ -9,10 +9,35 @@ tags:
 authors:
   - name: Timothée Poisot
     orcid: 0000-0002-0735-5184
-    affiliation: 1
+    affiliation: [1,2]
+  - name: Rory Gibb
+    orcid: 0000-0002-0965-1649
+    affiliation: [3,4]
+  - name: Sadie J. Ryan
+    orcid: 0000-0002-4308-6321
+    affiliations: [5,6,7]
+  - name: Colin J. Carlson
+    orcid: 0000-0001-6960-8434
+    affiliations: [8,9]
 affiliations:
- - name: Université de Montréal, Départment de Sciences Biologiques, Montréal QC, CANADA
-   index: 1
+  - name: Université de Montréal, Départment de Sciences Biologiques, Montréal QC, Canada
+    index: 1
+  - name: Québec Centre for Biodiversity Science, Montréal, QC, Canada
+    index: 2
+  - name: Centre for Mathematical Modelling of Infectious Diseases, London School of Hygiene and Tropical Medicine, London, UK
+    index: 3
+  - name: Centre on Climate Change and Planetary Health, London School of Hygiene and Tropical Medicine, London, UK
+    index: 4
+  - name: Department of Geography, University of Florida, Gainesville, FL, United States of America
+    index: 5
+  - name: Emerging Pathogens Institute, University of Florida, Gainesville, FL, United States of America
+    index: 6
+  - name: School of Life Sciences, University of KwaZulu-Natal, Durban, South Africa
+    index: 7
+  - name: Department of Microbiology and Immunology, Georgetown University Medical Center, Georgetown University, Washington, D.C., United States of America
+    index: 8
+  - name: Center for Global Health Science and Security, Georgetown University Medical Center, Georgetown University, Washington, D.C., United States of America
+    index: 9
 date: Jul. 30, 2021
 bibliography: paper.bib
 ---
@@ -222,12 +247,14 @@ needs to change the distance between taxonomic ranks) uses the
 @Shimatani2001MeaSpe approach to reconstruct a matrix of distances based on
 taxonomy, which can serve as a rough proxy when no phylogenies are available.
 
-**Acknowledgements:** TP was supported by funding to the Viral Emergence
+**Acknowledgements:** This work was supported by funding to the Viral Emergence
 Research Initiative (VERENA) consortium including NSF BII 2021909 and a grant
 from Institut de Valorisation des Données (IVADO), by the NSERC Discovery Grants
 and Discovery Acceleration Supplement programs, and by a donation from the
 Courtois Foundation. Benchmarking of this package on distributed systems was
 enabled by support provided by Calcul Québec (`www.calculquebec.ca`) and Compute
-Canada (`www.computecanada.ca`).
+Canada (`www.computecanada.ca`). TP wrote the initial code, TP and CJC
+contributed to API design, and all authors contributed to functionalities and
+usability testing.
 
 # References
