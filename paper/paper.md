@@ -15,10 +15,10 @@ authors:
     affiliation: [3,4]
   - name: Sadie J. Ryan
     orcid: 0000-0002-4308-6321
-    affiliations: [5,6,7]
+    affiliation: [5,6,7]
   - name: Colin J. Carlson
     orcid: 0000-0001-6960-8434
-    affiliations: [8,9]
+    affiliation: [8,9]
 affiliations:
   - name: Université de Montréal, Départment de Sciences Biologiques, Montréal QC, Canada
     index: 1
