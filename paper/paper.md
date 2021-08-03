@@ -9,16 +9,16 @@ tags:
 authors:
   - name: Timothée Poisot
     orcid: 0000-0002-0735-5184
-    affiliation: [1,2]
+    affiliation: "1, 2"
   - name: Rory Gibb
     orcid: 0000-0002-0965-1649
-    affiliation: [3,4]
+    affiliation: "3, 4"
   - name: Sadie J. Ryan
     orcid: 0000-0002-4308-6321
-    affiliation: [5,6,7]
+    affiliation: "5, 6, 7"
   - name: Colin J. Carlson
     orcid: 0000-0001-6960-8434
-    affiliation: [8,9]
+    affiliation: "8, 9"
 affiliations:
   - name: Université de Montréal, Départment de Sciences Biologiques, Montréal QC, Canada
     index: 1
