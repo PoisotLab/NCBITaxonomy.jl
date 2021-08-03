@@ -111,18 +111,59 @@ strict=false)`), to perform a lowercase search (useful when alphanumeric codes
 are part of the taxon name, like for some viruses), and to restrict the the
 search to a specific taxonomic rank.
 
+The lowercase search can be a preferable alternative to fuzzy string matching.
+Consider the string `Adeno-associated virus 3b` - it has three names with equal
+distance (under the Levensthein string distance function):
+
+~~~julia
+julia> similarnames("Adeno-associated virus 3b"; threshold=0.95)
+3-element Vector{Pair{NCBITaxon, Float64}}:
+  Adeno-associated virus - 3 (ncbi:46350) => 0.96
+   Adeno-associated virus 3B (ncbi:68742) => 0.96
+ Adeno-associated virus 3A (ncbi:1406223) => 0.96
+~~~
+
+Depending on the operating system, either of these three names can be returned;
+compare to the output of a case insensitive name search:
+
+~~~julia
+julia> taxon("Adeno-associated virus 3b"; casesensitive=false)
+Adeno-associated virus 3B (ncbi:68742)
+~~~
+
+This returns the correct name.
+
+## Name matching output and error handling
+
 The `taxon` function will either return a `NCBITaxon` object (made of a `name`
 and `id`), or throw either a `NameHasNoDirectMatch` (with instructions about how
 to possible solve it, using the `similarnames` function), or a
 `NameHasMultipleMatches` (listing the possible valid matches, and suggesting to
-use `alternativetaxa` to find the correct one). These functions will not demand
-any user input in the form of key presses (though they can be wrapped in
-additional code to allow it), as they are intended to run on clusters without
-supervision. The `taxon` function has good scaling using muliple threads.
+use `alternativetaxa` to find the correct one). Therefore, the common way to
+work with the `taxon` function would be to wrap it in a `try`/`catch` statement:
 
-For convenience in rapidly getting a taxon for demonstration purposes, we also
-provide a string macro, whereby *e.g.* `ncbi"Procyon lotor"` will return the
-taxon object for the raccoon.
+~~~julia
+try
+  taxon(name)
+  # Additional operations with the matched name
+catch err
+  if isa(err, NameHasNoDirectMatch)
+    # What to do if no match is found
+  elseif isa(err, NameHasMultipleMatches)
+    # What to do if there are multiple matches
+  else
+    # What to do in case of another error that is not NCBITaxonomy specific
+  end
+end
+
+~~~
+
+These functions will not demand any user input in the form of key presses
+(though they can be wrapped in additional code to allow it), as they are
+intended to run on clusters without supervision. The `taxon` function has good
+scaling using muliple threads. For convenience in rapidly getting a taxon for
+demonstration purposes, we also provide a string macro, whereby *e.g.*
+`ncbi"Procyon lotor"` will return the taxon object for the raccoon.
 
 ## Name filtering functions
 
