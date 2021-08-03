@@ -20,38 +20,39 @@ bibliography: paper.bib
 # Summary
 
 `NCBITaxonomy.jl` is a package designed to facilitate the reconciliation and
-cleaning of taxonomic names, using a *local* copy of the NCBI taxonomic backbone
+cleaning of taxonomic names, using a local copy of the NCBI taxonomic backbone
 [@Federhen2012NcbTax; @Schoch2020NcbTax]; The basic search functions are coupled
 with quality-of-life functions including case-insensitive search and custom
 fuzzy string matching to facilitate the amount of information that can be
-extracted automatically, while allowing efficient manual curation and inspection
+extracted automatically while allowing efficient manual curation and inspection
 of results. `NCBITaxonomy.jl` works with version 1.6 of the Julia programming
 language [@Bezanson2017JulFre], and relies on the Apache Arrow format to store a
 local copy of the NCBI raw taxonomy files. The design of `NCBITaxonomy.jl` has
-been inspired by recent proposals, like the R package `taxadb`
-[@Norman2020TaxHig].
+been inspired by similar efforts, like the R package `taxadb`
+[@Norman2020TaxHig], which provides an offline alternative to packages like
+`taxize` [@Chamberlain2013TaxTax].
 
 # Statement of need
 
-Identifying species in an unambiguous way is a far more challenging task than it
-may appears. There are a vast number of reasons for this. Different databases
-keep different taxonomic "backbones", *i.e.* different data structure in which
-names are mapped to species, and organised in a hierarchy. Not all names are
-unique identifiers to groups. For example, *Io* can either refer to a genus of
-plants from the aster family, or to a genus of molluscs; the genus *Mus* (of
-which the house mouse *Mus musculus* is a species), contains a sub-genus *also*
-named *Mus*. Conversely, the same species can be known by several names, which
-are valid synonyms: for example the domestic cow *Bos taurus* admits *Bos
-primigenius taurus* as a valid synonym. Taxonomic nomenclature also changes on a
-regular basis, with groups being split, merged, or moved to a new position in
-the tree of life; this is, notably, a common occurence with viral taxonomy, each
-subsequent version of which can differ markedly from the last [compare, *e.g*
-@Lefkowitz2018VirTax to @Walker2020ChaVir].
+Unambiguously identifying species is a far more challenging task than it may
+appear. There are a vast number of reasons for this. Different databases keep
+different taxonomic "backbones", *i.e.* different data structures in which names
+are mapped to species, and organised in a hierarchy. Not all names are unique
+identifiers to groups. For example, *Io* can either refer to a genus of plants
+from the aster family, or to a genus of molluscs; the genus *Mus* (of which the
+house mouse *Mus musculus* is a species), contains a sub-genus *also* named
+*Mus*. Conversely, the same species can have several names, which are valid
+synonyms: for example, the domestic cow *Bos taurus* admits *Bos primigenius
+taurus* as a valid synonym. Taxonomic nomenclature also changes regularly, with
+groups being split, merged, or moved to a new position in the tree of life; this
+is, notably, a common occurrence with viral taxonomy, each subsequent version of
+which can differ markedly from the last; compare, *e.g* @Lefkowitz2018VirTax to
+@Walker2020ChaVir.
 
 To add to the complexity, one must also consider that most taxa names are at
 some point manually typed, which has the potential to introduce additional
 mistakes in raw data; it is likely to expect that such mistakes may arise when
-attemptint to write down the (perfectly valid) names of the bacterial isolate
+attempting to write down the (perfectly valid) names of the bacterial isolate
 known as *Myxococcus
 llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogochensis*, or of the
 crowned slaty flycatcher  *Griseotyrannus aurantioatrocristatus*. These mistakes
@@ -63,18 +64,18 @@ English vernaculars including lamb, sheep, wild sheep, and domestic sheep.
 
 All these considerations are actually important when matching species names both
 within and across datasets. Let us consider the following species survey of
-individal fishes, European chub, *Cyprinus cephalus*, *Leuciscus cephalus*,
-*Squalius cephalus*: all are the same species (*S. cephalus*), refered to as one
-of the vernacular (European chub) and two formerly accepted names now classified
-as synonyms. An cautious estimate of diversity based on the user-supplied names
-would give $n=4$ species, when there is in fact only one.
+individual fishes, European chub, *Cyprinus cephalus*, *Leuciscus cephalus*,
+*Squalius cephalus*: all are the same species (*S. cephalus*), referred to as
+one of the vernacular (European chub) and two formerly accepted names now
+classified as synonyms. A cautious estimate of diversity based on the
+user-supplied names would give $n=4$ species, when there is in fact only one.
 
 A package with the ability to handle the sources of errors outlined above, and
 especially while provide an authoritative classification, can accelerate the
 work of consuming large volumes of biodiversity data. For example, this package
-was used in the process of assembling the *CLOVER* database [@Gibb2021DatPro] of
+was used in the process of developing the *CLOVER* database [@Gibb2021DatPro] of
 host-virus associations, by reconciling the names of viruses and mammals from
-four different sources, where all of the aforementioned issues were present.
+four different sources, where all of the issues described above were present.
 
 # Overview of functionalities
 
@@ -155,7 +156,6 @@ catch err
     # What to do in case of another error that is not NCBITaxonomy specific
   end
 end
-
 ~~~
 
 These functions will not demand any user input in the form of key presses
@@ -169,11 +169,33 @@ demonstration purposes, we also provide a string macro, whereby *e.g.*
 
 As the full NCBI names table has over 3 million entries at the time of writing,
 we have provided a number of functions to restrict the scope of names that are
-searched. These are driven by the NCBI *divisions*; for example `nf =
-mammalfinder(true)` will return a data frame containing the names of mammals,
-inclusive of rodentds and primates, and can be used with *e.g.* `taxon(nf,
+searched. These are driven by the NCBI *divisions*. For example `nf =
+mammalfilter(true)` will return a data frame containing the names of mammals,
+inclusive of rodents and primates, and can be used with *e.g.* `taxon(nf,
 "Pan")`. This has the dual advantage of making search faster, but also of
-avoiding matching on names that are shared by another taxonomic group.
+avoiding matching on names that are shared by another taxonomic group (which is
+not an issue with *Pan*, but is an issue with *e.g.* *Io* as mentioned in the
+introduction).
+
+Note that the use of a restricted list of names can have significant performance
+consequences: compare, for example, the time taken to return the taxon *Pan* (ID
+9596) in the entire database, in all mammals, and in all primates:
+
+| Names list           | Fuzzy matching | Time (ms) | Allocations | Memory allocated |
+| -------------------- | :------------: | --------- | ----------- | ---------------- |
+| all                  |       no       | 23        | 34          | 2 KiB            |
+|                      |      yes       | 105       | 2580        | 25 MiB           |
+| `mammalfilter(true)` |       no       | 0.55      | 32          | 2 KiB            |
+|                      |      yes       | 1.9       | 551         | 286 KiB          |
+| `primatefilter()`    |       no       | 0.15      | 33          | 2 KiB            |
+|                      |      yes       | 0.3       | 92          | 27 KiB           |
+
+Clearly, the optimal search strategy is to (i) rely on name filters to ensure
+that search are conducted within the appropriate NCBI division, and (ii) only
+rely on fuzzy matching when the strict or lowercase match fails to return a
+name, as fuzzy matching can result in order of magnitude more run time and
+memory footprint. These numbers were obtained on a single Intel i7-8665U CPU (@
+(1.90GHz).
 
 ## Quality of life functions
 
