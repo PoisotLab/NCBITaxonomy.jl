@@ -1,6 +1,7 @@
 # NCBI taxonomy
 
-[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) [![DOI](https://zenodo.org/badge/312718490.svg)](https://zenodo.org/badge/latestdoi/312718490)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) [![DOI](https://zenodo.org/badge/312718490.svg)](https://zenodo.org/badge/latestdoi/312718490) [![status](https://joss.theoj.org/papers/a8f488d7c2348763735cd545e7d0604c/status.svg)](https://joss.theoj.org/papers/a8f488d7c2348763735cd545e7d0604c)
+
 
 ![CI](https://github.com/EcoJulia/NCBITaxonomy.jl/workflows/CI/badge.svg) [![codecov](https://codecov.io/gh/EcoJulia/NCBITaxonomy.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/EcoJulia/NCBITaxonomy.jl)
 
