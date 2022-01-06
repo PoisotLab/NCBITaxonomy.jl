@@ -36,11 +36,14 @@ end
     NameHasMultipleMatches
 
 This exception is thrown when the name is an "in-part" name, which is not a
-valid node but an aggregation of multiple nodes. It is also thrown when the
-name is valid for several nodes. The error message will return the taxa that
-could be used instead. "Reptilia" is an example of a node that will throw
-this exception (in-part name); "Mus" will throw this example as it is valid
-subgenus of itself.
+valid node but an aggregation of multiple nodes. It is also thrown when the name
+is valid for several nodes. The error message will return the taxa that could be
+used instead. "Reptilia" is an example of a node that will throw this exception
+(in-part name); "Mus" will throw this example as it is valid subgenus of itself.
+
+Note that the error object has a `taxa` field, which stores the `NCBITaxon` that
+were matched; this allows to catch the error and look for the taxon you want
+without relying on *e.g.* `alternativetaxa`.
 """
 struct NameHasMultipleMatches <: Exception
     name::String
