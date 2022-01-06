@@ -7,7 +7,8 @@ my_tests = [
    "lineages.jl",
    "rank.jl",
    "namefinders.jl",
-   "divisions.jl"
+   "divisions.jl",
+   "synonyms.jl"
 ]
 
 global test_n
