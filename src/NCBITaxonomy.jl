@@ -13,7 +13,7 @@ if !haskey(ENV, "NCBITAXONOMY_PATH")
     file. The path will be created automatically if it does not exist.
     """
 end
-const taxpath = get(ENV, "NCBITAXONOMY_PATH", joinpath(@__DIR__, "..", "deps"))
+const taxpath = get(ENV, "NCBITAXONOMY_PATH", joinpath(homedir(), "NCBITaxonomy"))
 ispath(taxpath) || mkpath(taxpath)
 
 function __init__()
