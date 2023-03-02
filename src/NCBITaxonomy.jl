@@ -77,7 +77,7 @@ export lineage, commonancestor
 include("lineage/rank.jl")
 export rank
 
-include("lineage/descendantsfinder.jl")
+include("lineage/descendantsfilter.jl")
 export descendantsfilter
 
 include("utility/nametools.jl")

@@ -20,5 +20,19 @@ This function can be useful to speed up the iteration using the AbstractTrees
 interface, notably to find the right node to use for `descendantsfilter`.
 """
 function commonancestor(tax::Vector{NCBITaxon})
-    
+    return reduce(commonancestor, tax)
+end
+
+"""
+    commonancestor(t1::NCBITaxon, t2::NCBITaxon)
+
+Returns the node corresponding to the last common ancestor of two taxa. This
+function can be useful to speed up the iteration using the AbstractTrees
+interface, notably to find the right node to use for `descendantsfilter`.
+"""
+function commonancestor(t1::NCBITaxon, t2::NCBITaxon)
+    l1 = lineage(t1)
+    l2 = lineage(t2)
+    common = last(l1 ∩ l2)
+    return common
 end
