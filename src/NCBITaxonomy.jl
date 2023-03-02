@@ -2,6 +2,7 @@ module NCBITaxonomy
 using DataFrames
 using Arrow
 using StringDistances
+using AbstractTrees
 
 if !haskey(ENV, "NCBITAXONOMY_PATH")
     @warn """
@@ -68,9 +69,16 @@ export bacteriafilter,
     environmentalsamplesfilter,
     phagefilter
 
-include("lineage/children.jl")
+include("interfaces/abstracttrees.jl")
+
 include("lineage/lineage.jl")
-export children, descendants, lineage, parent, rank
+export lineage, commonancestor
+
+include("lineage/rank.jl")
+export rank
+
+include("lineage/descendantsfinder.jl")
+export descendantsfilter
 
 include("utility/nametools.jl")
 include("utility/similarnames.jl")

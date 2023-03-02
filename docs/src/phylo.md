@@ -1,24 +1,24 @@
 # Use-case: taxonomic tree
 
 In this exmaple, we will use the output of the `lineage` function to build a
-tree in the `Phylo.jl` package, then plot it.
+tree in the `Phylo.jl` package, then plot it. This example also serves as a
+showcase for the support of `AbstractTrees.jl`.
 
 ```@example tree
 using Plots
 using Phylo
 using NCBITaxonomy
+using AbstractTrees
 ```
 
-We will focus on the Lemuriformes infra-order, for which we can get the entire
-list of descendants:
+We will focus on the Lemuriformes infra-order:
 
 ```@example tree
-monke = ncbi"Lemuriformes"
-monken = descendants(monke)
+tree_root = ncbi"Lemuriformes"
 ```
 
 We will first create a tree by adding the species as tips -- some of the taxa
-are sub-species, but that's OK (we will visualize it later anyways):
+are sub-species, but that's OK (we will visualize it later anyways). Because 
 
 ```@example tree
 sponke = filter(t -> rank(t) == :species, monken)
