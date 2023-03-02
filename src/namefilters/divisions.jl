@@ -55,7 +55,8 @@ for organisms assigned to a lower division, in this case rodents (covered by
 `rodentfinder`) and primates (covered by `primatefinder`). The default behavior
 is to include these groups.
 """
-mammalfilter(inclusive::Bool=true) = inclusive ? namefilter([:MAM, :ROD, :PRI]) : namefilter(:MAM)
+mammalfilter(inclusive::Bool = true) =
+    inclusive ? namefilter([:MAM, :ROD, :PRI]) : namefilter(:MAM)
 
 """
     vertebratefilter(;inclusive::Bool=true)
@@ -69,7 +70,8 @@ for organisms assigned to a lower division, in this case mammals (covered by
 `mammalfinder`). The default behavior is to include these groups, which also
 include the groups covered by `mammalfinder` itself.
 """
-vertebratefilter(inclusive::Bool=true) = inclusive ? namefilter([:VRT, :MAM, :ROD, :PRI]) : namefilter(:VRT)
+vertebratefilter(inclusive::Bool = true) =
+    inclusive ? namefilter([:VRT, :MAM, :ROD, :PRI]) : namefilter(:VRT)
 
 """
     invertebratefilter()
@@ -91,7 +93,6 @@ the documentation for `namefinder` and `taxid` for more information about
 arguments.
 """
 phagefilter() = namefilter(:PHG)
-
 
 """
     environmentalsamplesfilter()

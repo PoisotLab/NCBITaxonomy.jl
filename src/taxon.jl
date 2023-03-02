@@ -10,7 +10,7 @@ function taxon(df::DataFrame, id::Integer)
     submatches = df[matched_indices, :]
     @assert NCBITaxonomy.class_scientific_name in submatches.class
     sciname_position = findfirst(
-        isequal(NCBITaxonomy.class_scientific_name), submatches.class
+        isequal(NCBITaxonomy.class_scientific_name), submatches.class,
     )
     return NCBITaxon(submatches.name[sciname_position], id)
 end
@@ -29,15 +29,19 @@ end
 function _id_from_name(
     df::DataFrame,
     name::AbstractString;
-    strict::Bool=true,
-    dist::Type{SD}=Levenshtein,
-    casesensitive::Bool=true,
-    rank::Union{Nothing,Symbol}=nothing,
-    preferscientific::Bool=false
-) where {SD<:StringDistance}
+    strict::Bool = true,
+    dist::Type{SD} = Levenshtein,
+    casesensitive::Bool = true,
+    rank::Union{Nothing, Symbol} = nothing,
+    preferscientific::Bool = false,
+    onlysynonyms::Bool = false,
+) where {SD <: StringDistance}
     if !isnothing(rank)
         @assert rank ∈ unique(df.rank)
-        df = df[findall(isequal(rank), df.rank),:]
+        df = df[findall(isequal(rank), df.rank), :]
+    end
+    if onlysynonyms
+        df = df[findall(isequal(NCBITaxonomy.class_synonym), df.class), :]
     end
     if strict
         positions = if casesensitive
@@ -52,7 +56,10 @@ function _id_from_name(
         # If we prefer scientific names, we can filter with this
         if preferscientific
             if NCBITaxonomy.class_scientific_name in df.class[positions]
-                ids = df.tax_id[positions][findall(isequal(NCBITaxonomy.class_scientific_name), df.class[positions])]
+                ids = df.tax_id[positions][findall(
+                    isequal(NCBITaxonomy.class_scientific_name),
+                    df.class[positions],
+                )]
                 if length(ids) == 1
                     return first(ids)
                 else
@@ -78,14 +85,16 @@ string, and a series of keywords, and go look for this taxon in the dataframe
 
 The keywords are:
 
-- `strict` (def. `true`), allows fuzzy matching
-- `dist` (def. `Levenshtein`), the string distance function to use
-- `casesensitive` (def. `true`), whether to strict match on lowercased names
-- `rank` (def. `nothing`), the taxonomic rank to limit the search
-- `preferscientific` (def. `false`), whether scientific names are prefered when
-  the query also matches non-scientific names (synonyms, vernaculars, blast
-  names, ...) - this is most likely useful when paired with
-  `casesensitive=true`, and is not working with `strict=false`
+  - `strict` (def. `true`), allows fuzzy matching
+  - `dist` (def. `Levenshtein`), the string distance function to use
+  - `casesensitive` (def. `true`), whether to strict match on lowercased names
+  - `rank` (def. `nothing`), the taxonomic rank to limit the search
+  - `preferscientific` (def. `false`), whether scientific names are prefered
+    when the query also matches non-scientific names (synonyms, vernaculars,
+    blast names, ...) - this is most likely useful when paired with
+    `casesensitive=true`, and is not working with `strict=false`
+  - `onlysynonyms` (def. `false`) - limits the search to synonyms, which may be
+    useful in case the taxonomy is particularly outdated
 """
 taxon(name::AbstractString; kwargs...) = taxon(NCBITaxonomy.names_table, name; kwargs...)
 
