@@ -5,7 +5,7 @@ tree in the `Phylo.jl` package, then plot it. This example also serves as a
 showcase for the support of `AbstractTrees.jl`.
 
 ```@example tree
-using Plots
+using CairoMakie
 using Phylo
 using NCBITaxonomy
 using AbstractTrees
