@@ -28,7 +28,7 @@ SUITE["taxon search"]["by name"] = @benchmarkable taxon("Sus scrofa")
 SUITE["taxon search"]["with finder"] = @benchmarkable taxon(mf, "Sus scrofa")
 
 SUITE["taxon search"]["lowercase with finder"] =
-    @benchmarkable taxon(mf, "Sus scrofa"; lowercase = true)
+    @benchmarkable taxon(mf, "Sus scrofa"; casesensitive = false)
 
 SUITE["taxon search"]["scientific with finder"] =
     @benchmarkable taxon(mf, "Sus scrofa"; preferscientific = true)
