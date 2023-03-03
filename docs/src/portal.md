@@ -114,6 +114,3 @@ group, containing a handful of different groups. Based on the information
 available, the only information we can say about the taxon identified as
 "Lizards" is that it belongs to *Squamata*.
 
-## Finding common ancestors
-
-We 
