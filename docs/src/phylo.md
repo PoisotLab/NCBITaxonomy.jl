@@ -66,5 +66,6 @@ end
 We can finally plot the tree:
 
 ```@example tree
-plot(tree, treetype=:fan)
+sort!(tree, rev=true)
+Plots.plot(tree, treetype=:fan)
 ```

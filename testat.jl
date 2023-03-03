@@ -22,7 +22,7 @@ sps =
         "Diplectanum",
         "Echinoplectanum",
         "Diplozoon",
-        "Paradiclybothrium"
+        "Paradiclybothrium",
     ])
 
 @benchmark commonancestor(sps[1], sps[2])
