@@ -1,18 +1,13 @@
 module TestNamefinders
 
-    using Test
-    using NCBITaxonomy
+using Test
+using NCBITaxonomy
+using AbstractTrees
 
-    dipl = descendants(ncbi"Diplectanidae")
+dipl = collect(AbstractTrees.PreOrderDFS(ncbi"Diplectanidae"))
 
-    lam = taxon(namefilter(dipl), "Lamellodiscus elegans")
-
-    @test typeof(lam) == NCBITaxon
-    @test lam.name == "Lamellodiscus elegans"
-
-    dipl_2 = namefilter(descendants(ncbi"Diplectanidae"))
-
-    @test !isnothing(taxon(dipl_2, "Lamellodiscus elegans"))
-    @test_throws NameHasNoDirectMatch taxon(dipl_2, "Gallus gallus")
+@test taxon(namefilter(dipl), "Lamellodiscus elegans") == ncbi"Lamellodiscus elegans"
+@test taxon(namefilter(dipl), "Lamellodiscus") == ncbi"Lamellodiscus"
+@test_throws NameHasNoDirectMatch taxon(namefilter(dipl), "Gallus gallus")
 
 end
