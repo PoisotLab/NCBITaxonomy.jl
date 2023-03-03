@@ -10,10 +10,9 @@ SUITE["name finders"] = BenchmarkGroup(["namefinding", "utilities"])
 
 SUITE["name finders"]["mammals"] = @benchmarkable mammalfilter(false)
 
-SUITE["name finders"]["mammals (inclusive)"] =
-    @benchmarkable mammalfilter(inclusive = true)
+SUITE["name finders"]["mammals (inclusive)"] = @benchmarkable mammalfilter(true)
 
-SUITE["name finders"]["phage"] = @benchmarkable phagefilter(true)
+SUITE["name finders"]["phage"] = @benchmarkable phagefilter()
 
 # Prepare a mammal filter next
 mf = mammalfilter()
