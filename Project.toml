@@ -13,6 +13,7 @@ StringDistances = "88034a9c-02f8-509d-84a9-84ec65e18404"
 Tar = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 
 [compat]
+AbstractTrees = "0.4"
 Arrow = "0.4, 1.0, 2.2"
 DataFrames = "0.21, 0.22, 1.0"
 GZip = "0.5"
