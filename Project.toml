@@ -1,9 +1,10 @@
 name = "NCBITaxonomy"
 uuid = "f88b31d2-eb98-4433-b52d-2dd32bc6efce"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "0.3.0"
+version = "0.4.0"
 
 [deps]
+AbstractTrees = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
 Arrow = "69666777-d1a9-59fb-9406-91d4454c9d45"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 GZip = "92fee26a-97fe-5a0c-ad85-20a5f3185b63"

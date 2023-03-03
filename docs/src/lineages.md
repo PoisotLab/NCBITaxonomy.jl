@@ -4,11 +4,11 @@
 
 ```@docs
 lineage
-children
-descendants
-parent
+AbstractTrees.children
+AbstractTrees.parent
 rank
 taxonomicdistance!
+commonancestor
 ```
 
 ## Examples
@@ -20,20 +20,21 @@ descending from the one given as argument. For example, the genus
 ```@example lineages
 using NCBITaxonomy
 
-ncbi"Lamellodiscus" |> children
+ncbi"Lamellodiscus" |> AbstractTrees.children
 ```
 
 Note that the `parent` function does the opposite of `children`:
 
 ```@example lineages
-ncbi"Lamellodiscus kechemirae" |> parent
+ncbi"Lamellodiscus kechemirae" |> AbstractTrees.parent
 ```
 
 To get the full descendants of a taxon (*i.e.* the children of its children,
-recursively), we can do:
+recursively), we can use the tree traversal opertions in `AbstractTrees`,
+*e.g.*:
 
 ```@example lineages
-descendants(ncbi"Diplectanidae")
+AbstractTrees.PostOrderDFS(ncbi"Diplectanidae")
 ```
 
 We can also work upwards in the taxonomy, using the `lineage` function -- it
