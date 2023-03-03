@@ -60,7 +60,7 @@ end
 
 @info "Materializing the taxonomy"
 
-# This is the separator used for fields in all the files
+# We will store the tables used by the package in the tables folder
 tables = joinpath(taxpath, "tables")
 ispath(tables) || mkpath(tables)
 
