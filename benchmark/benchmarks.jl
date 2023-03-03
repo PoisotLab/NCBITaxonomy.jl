@@ -1,5 +1,6 @@
 using BenchmarkTools
 using NCBITaxonomy
+using AbstractTrees
 
 const SUITE = BenchmarkGroup()
 

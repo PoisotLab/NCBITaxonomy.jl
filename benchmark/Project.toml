@@ -1,2 +1,3 @@
 [deps]
+AbstractTrees = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
 NCBITaxonomy = "f88b31d2-eb98-4433-b52d-2dd32bc6efce"
