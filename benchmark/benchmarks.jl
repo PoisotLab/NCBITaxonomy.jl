@@ -28,10 +28,10 @@ SUITE["taxon search"]["by name"] = @benchmarkable taxon("Sus scrofa")
 
 SUITE["taxon search"]["with finder"] = @benchmarkable taxon(mf, "Sus scrofa")
 
-SUITE["taxonsearch"]["lowercase with finder"] =
+SUITE["taxon search"]["lowercase with finder"] =
     @benchmarkable taxon(mf, "Sus scrofa"; lowercase = true)
 
-SUITE["taxonsearch"]["scientific with finder"] =
+SUITE["taxon search"]["scientific with finder"] =
     @benchmarkable taxon(mf, "Sus scrofa"; preferscientific = true)
 
 # Ability to traverse a tree
