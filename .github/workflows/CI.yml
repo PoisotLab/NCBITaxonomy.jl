@@ -18,9 +18,10 @@ jobs:
         version:
           - '1.5'
           - '1.6'
+          - '1.7'
+          - '1.8'
         os:
           - ubuntu-latest
-          - macOS-latest
         arch:
           - x64
         experimental: [false]
