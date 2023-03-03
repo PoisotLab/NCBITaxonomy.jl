@@ -1,3 +1,4 @@
 [deps]
+AbstractTrees = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
 StringDistances = "88034a9c-02f8-509d-84a9-84ec65e18404"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
