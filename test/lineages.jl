@@ -2,13 +2,14 @@ module TestLineages
 
     using Test
     using NCBITaxonomy
+    using AbstractTrees
 
-    @test parent(ncbi"Lamellodiscus") == ncbi"Diplectanidae"
+    @test AbstractTrees.parent(ncbi"Lamellodiscus") == ncbi"Diplectanidae"
 
-    @test lineage(ncbi"Lamellodiscus"; stop_at=ncbi"Dactylogyridea") == reverse([ncbi"Lamellodiscus", ncbi"Diplectanidae", ncbi"Dactylogyridea"])
+    @test AbstractTrees.lineage(ncbi"Lamellodiscus"; stop_at=ncbi"Dactylogyridea") == reverse([ncbi"Lamellodiscus", ncbi"Diplectanidae", ncbi"Dactylogyridea"])
 
-    @test children(ncbi"Lamellodiscus") == descendants(ncbi"Lamellodiscus")
+    @test AbstractTrees.children(ncbi"Lamellodiscus") collect(AbstractTrees.Leaves(ncbi"Lamellodiscus"))
 
-    @test ncbi"Lamellodiscus" in descendants(ncbi"Diplectanidae")
+    @test AbstractTrees.intree(ncbi"Lamellodiscus", ncbi"Diplectanidae")
 
 end

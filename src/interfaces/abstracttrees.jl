@@ -27,9 +27,13 @@ Returns the taxon from which the argument taxon is descended.
 function AbstractTrees.parent(tax::NCBITaxon)
     position = findfirst(isequal(tax.id), NCBITaxonomy.scinames_table.tax_id)
     if ~isnothing(position)
+        parent_position = findfirst(
+            isequal(NCBITaxonomy.scinames_table.parent_tax_id[position]),
+            NCBITaxonomy.scinames_table.tax_id,
+        )
         return NCBITaxon(
-            NCBITaxonomy.scinames_table.name[position],
-            NCBITaxonomy.scinames_table.tax_id[position],
+            NCBITaxonomy.scinames_table.name[parent_position],
+            NCBITaxonomy.scinames_table.tax_id[parent_position],
         )
     else
         return nothing
