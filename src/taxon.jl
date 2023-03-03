@@ -5,14 +5,9 @@ Returns a fully formed `NCBITaxon` based on its id. The `name` of the taxon
 will be the valid scientic name associated to this id.
 """
 function taxon(df::DataFrame, id::Integer)
-    matched_indices = findall(isequal(id), df.tax_id)
-    isempty(matched_indices) && throw(IDNotFoundInBackbone(id))
-    submatches = df[matched_indices, :]
-    @assert NCBITaxonomy.class_scientific_name in submatches.class
-    sciname_position = findfirst(
-        isequal(NCBITaxonomy.class_scientific_name), submatches.class
-    )
-    return NCBITaxon(submatches.name[sciname_position], id)
+    matched_index = findfirst(isequal(id), df.tax_id)
+    isempty(matched_index) && throw(IDNotFoundInBackbone(id))
+    return NCBITaxon(df.name[matched_index], id)
 end
 
 """
@@ -20,7 +15,7 @@ end
 
 Performs a search in the entire taxonomy backbone based on a known ID.
 """
-taxon(id::Integer) = taxon(NCBITaxonomy.names_table, id)
+taxon(id::Integer) = taxon(NCBITaxonomy.scinames_table, id)
 
 function _id_from_name(name::AbstractString; kwargs...)
     return _id_from_name(NCBITaxonomy.names_table, name; kwargs...)

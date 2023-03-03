@@ -52,6 +52,8 @@ names_table = leftjoin(
     names_table, unique(select(nodes_table, [:tax_id, :rank])); on=:tax_id
 )
 
+scinames_table = names_table[findall(names_table.class .== class_scientific_name), :]
+
 include("taxon.jl")
 export taxon, @ncbi_str
 
