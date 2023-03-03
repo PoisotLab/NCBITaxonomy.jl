@@ -21,9 +21,34 @@ species = JSON.parsefile(species_file)
 
 ## Cleaning up the portal names
 
-There is are two things we want to do at this point: extract the species names
-from the file, and then validate that they are spelled correctly, or that they
-are the most recent taxonomic name according to NCBI.
+There are two things we want to do at this point: extract the species names from
+the file, and then validate that they are spelled correctly, or that they are
+the most recent taxonomic name according to NCBI.
+
+The portal data are already identified as belonging to a group of taxa, so we
+can get a unique list of them:
+
+```@example portal
+taxo_groups = unique([tax["taxa"] for tax in species])
+```
+
+In order to speed-up the search, and make sure that the names match, we will
+create a series of `namefilter`s, based on the descendants of these taxa.
+
+```@example portal
+portalfilters = Dict(
+    "Bird" => descendantsfilter(ncbi"Aves"),
+    "Rodent" => rodentfilter(),
+    "Reptile" => descendantsfilter(ncbi"Sauria"),
+    "Rabbit" => descendantsfilter(ncbi"Lagomorpha"),
+)
+```
+
+In practice, because the `descendantfilter` (and any `*filter`) functions return
+a `DataFrame`, we could save the content of the groups. If we had the guarantee
+that the names are all scientific names, we could further refine the dataframes,
+but this is not the case here. In any case, having these filters at hand is
+going to allow us to limit the searches to the pool of correct taxa.
 
 We will store our results in a data frame:
 
