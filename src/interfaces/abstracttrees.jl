@@ -4,9 +4,9 @@
 Returns the children of a taxon.
 """
 function AbstractTrees.children(tax::NCBITaxon)
-    positions = findall(isequal(tax.id), NCBITaxonomy.nodes_table.parent_tax_id)
+    positions = findall(isequal(tax.id), NCBITaxonomy.scinames_table.parent_tax_id)
     if ~isempty(positions)
-        return taxon.(NCBITaxonomy.nodes_table.tax_id[positions])
+        return taxon.(NCBITaxonomy.scinames_table.tax_id[positions])
     else
         return ()
     end
@@ -18,8 +18,8 @@ end
 Returns the taxon from which the argument taxon is descended.
 """
 function AbstractTrees.parent(tax::NCBITaxon)
-    position = findfirst(isequal(tax.id), NCBITaxonomy.nodes_table.tax_id)
-    parent_id = NCBITaxonomy.nodes_table.parent_tax_id[position]
+    position = findfirst(isequal(tax.id), NCBITaxonomy.scinames_table.tax_id)
+    parent_id = NCBITaxonomy.scinames_table.parent_tax_id[position]
     isnothing(parent_id) && return nothing
     return taxon(parent_id)
 end
