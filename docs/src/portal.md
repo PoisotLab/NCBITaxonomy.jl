@@ -21,9 +21,16 @@ species = JSON.parsefile(species_file)
 
 ## Cleaning up the portal names
 
-There is are two things we want to do at this point: extract the species names
-from the file, and then validate that they are spelled correctly, or that they
-are the most recent taxonomic name according to NCBI.
+There are two things we want to do at this point: extract the species names from
+the file, and then validate that they are spelled correctly, or that they are
+the most recent taxonomic name according to NCBI.
+
+The portal data are already identified as belonging to a group of taxa, so we
+can get a unique list of them:
+
+```@example portal
+taxo_groups = unique([tax["taxa"] for tax in species])
+```
 
 We will store our results in a data frame:
 
@@ -34,7 +41,9 @@ cleanup = DataFrame(
     name = String[],
     rank = Symbol[],
     order = String[],
-    taxid = Int[]
+    taxid = Int[],
+    same = Bool[],
+    fuzzy = Bool[]
 )
 ```
 
@@ -45,10 +54,12 @@ with them:
 for sp in species
     portal_name = sp["species"] == "sp." ? sp["genus"] : sp["genus"]*" "*sp["species"]
     local ncbi_tax
+    local fuzzy = false
     try
         ncbi_tax = taxon(portal_name)
     catch y
         if isa(y, NameHasNoDirectMatch)
+            fuzzy = true
             ncbi_tax = taxon(portal_name; strict=false)
         else
             continue
@@ -59,7 +70,7 @@ for sp in species
         (
             sp["species_id"], portal_name, ncbi_tax.name, rank(ncbi_tax),
             first(filter(t -> isequal(:order)(rank(t)), lineage(ncbi_tax))).name,
-            ncbi_tax.id
+            ncbi_tax.id, portal_name == ncbi_tax.name, fuzzy
         )
     )
 end
@@ -77,31 +88,29 @@ vernacular, or spelling issues:
 filter(r -> r.portal != r.name, cleanup)
 ```
 
-Note that these results should *always* be manually curated. For example,
-some species have been match to *Hemiptera*, which sounds suspect:
+Out of these, some required to use fuzzy matching to get a proper name, so we
+can look at there taxa, as they are likely to require manual curation:
 
 ```@example portal
-filter(r -> r.order ∈ ["Hemiptera"], cleanup)
+filter(r -> r.fuzzy, cleanup)
 ```
 
-## Fixing the mis-identified species
-
-Well, the obvious choice here is *manual cleaning*. This is a good solution.
-Another thing that `NCBITaxonomy` offers is the ability to build a `namefilter`
-from a list of known NCBI taxa. This is good if we know that the names we expect
-to find are part of a reference list.
-
-In this case, we know that the species are going to be vertebrates, so we can use
-the `vertebratefinder` function to restrict the search to these groups:
+Out of these, only `Lizard` has a strange identification as a `Hemiptera`:
 
 ```@example portal
-vert = vertebratefilter(true) # We want taxa that are specific divisions of vertebrates as well
-taxon(vert, "Lizard"; strict=false)
+filter(t -> isequal(:class)(rank(t)), lineage(ncbi"Lisarda"))
 ```
 
-## Wrapping-up
+Right. We can dig into this example a little more, because it shows how much
+*data entry* can condition the success of name finding.
 
-This vignette illustrates how to go through a list of names, and match them
-against the NCBI taxonomy. We have seen a number of functions from
-`NCBITaxonomy`, including fuzzy string searching, using custom string distances,
-and limiting the taxonomic scope of the search.
+```@example portal
+similarnames("Lizard"; threshold=0.7)
+```
+
+The *Lisarda* taxon (which is an insect!) is the closest match, simply because
+"Lizards" is not a classification we can use -- lizards are a paraphyletic
+group, containing a handful of different groups. Based on the information
+available, the only information we can say about the taxon identified as
+"Lizards" is that it belongs to *Squamata*.
+
