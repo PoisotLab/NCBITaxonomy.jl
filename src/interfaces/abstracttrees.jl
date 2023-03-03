@@ -29,7 +29,7 @@ function AbstractTrees.parent(tax::NCBITaxon)
     if ~isnothing(position)
         return NCBITaxon(
             NCBITaxonomy.scinames_table.name[position],
-            NCBITaxonomy.scinames_table.parent_tax_id[position],
+            NCBITaxonomy.scinames_table.tax_id[position],
         )
     else
         return nothing
