@@ -93,7 +93,7 @@ with a `namefinder`. Accepts the usual `taxon` keyword arguments.
 function taxon(df::DataFrame, name::AbstractString; kwargs...)
     id = _id_from_name(df, name; kwargs...)
     isnothing(id) && return nothing
-    return taxon(df, id)
+    return taxon(id)
 end
 
 """
