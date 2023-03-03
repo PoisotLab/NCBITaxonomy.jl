@@ -45,10 +45,13 @@ portalfilters = Dict(
 ```
 
 In practice, because the `descendantfilter` (and any `*filter`) functions return
-a `DataFrame`, we could save the content of the groups. If we had the guarantee
-that the names are all scientific names, we could further refine the dataframes,
-but this is not the case here. In any case, having these filters at hand is
-going to allow us to limit the searches to the pool of correct taxa.
+a `DataFrame`, we could save the content of the groups; this is particularly
+important, because the construction of a name finder required to traverse the
+entire tree under the root taxon, which is going to be time consuming for larger
+groups (such as, for example, *Aves*). If we had the guarantee that the names
+are all scientific names, we could further refine the dataframes, but this is
+not the case here. In any case, having these filters at hand is going to allow
+us to limit the searches to the pool of correct taxa.
 
 We will store our results in a data frame:
 
@@ -71,10 +74,10 @@ for sp in species
     portal_name = sp["species"] == "sp." ? sp["genus"] : sp["genus"]*" "*sp["species"]
     local ncbi_tax
     try
-        ncbi_tax = taxon(portal_name)
+        ncbi_tax = taxon(portalfinders[species["taxa"]], portal_name)
     catch y
         if isa(y, NameHasNoDirectMatch)
-            ncbi_tax = taxon(portal_name; strict=false)
+            ncbi_tax = taxon(portalfinders[species["taxa"]], portal_name; strict=false)
         else
             continue
         end
@@ -101,32 +104,3 @@ vernacular, or spelling issues:
 ```@example portal
 filter(r -> r.portal != r.name, cleanup)
 ```
-
-Note that these results should *always* be manually curated. For example,
-some species have been match to *Hemiptera*, which sounds suspect:
-
-```@example portal
-filter(r -> r.order ∈ ["Hemiptera"], cleanup)
-```
-
-## Fixing the mis-identified species
-
-Well, the obvious choice here is *manual cleaning*. This is a good solution.
-Another thing that `NCBITaxonomy` offers is the ability to build a `namefilter`
-from a list of known NCBI taxa. This is good if we know that the names we expect
-to find are part of a reference list.
-
-In this case, we know that the species are going to be vertebrates, so we can use
-the `vertebratefinder` function to restrict the search to these groups:
-
-```@example portal
-vert = vertebratefilter(true) # We want taxa that are specific divisions of vertebrates as well
-taxon(vert, "Lizard"; strict=false)
-```
-
-## Wrapping-up
-
-This vignette illustrates how to go through a list of names, and match them
-against the NCBI taxonomy. We have seen a number of functions from
-`NCBITaxonomy`, including fuzzy string searching, using custom string distances,
-and limiting the taxonomic scope of the search.
