@@ -16,7 +16,7 @@ build the package again.
 
 *Please note* that the taxonomy dump is a big download. If the
 `NCBITAXONOMY_PATH` is not set, it will be stored in the package folder under
-the `.julia` directory, which is a *bad idea*. We strongly recommend editing
+the `homedir()` directory, which is a *bad idea*. We strongly recommend editing
 your [configuration
 file](https://docs.julialang.org/en/v1/manual/environment-variables/), or
 exporting the `NCBITAXONOMY_PATH` environment variable.
