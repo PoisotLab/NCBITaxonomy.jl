@@ -105,14 +105,6 @@ viruses = virusfilter()
 @time taxon(viruses, "Bumbulu ebolavirus"; strict=false);
 ```
 
-A `namefilter` can be built in a number of ways, including by passing a list of
-taxa:
-
-```@example taxon
-diplectanids = namefilter(descendants(ncbi"Diplectanidae"))
-taxon(diplectanids, "Lamellodiscus")
-```
-
 ## Standard namefilters
 
 To save some time, there are namefilters pre-populated with the large-level

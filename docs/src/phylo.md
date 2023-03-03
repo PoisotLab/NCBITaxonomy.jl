@@ -27,20 +27,21 @@ tree_leaves = collect(Leaves(tree_root))
 
 We can double-check that these taxa all have the correct common ancestor:
 
-```@example treee
+```@example tree
 commonancestor(tree_leaves)
 ```
 
-At this point, we can start creating our tree object. Before we do this, we will add a few overloads to 
+At this point, we can start creating our tree object. Before we do this, we will
+add a few overloads to the `Phylo.jl` functions:
 
-```@example treee
+```@example tree
 Phylo.RootedTree(taxa::Vector{NCBITaxon}) = RootedTree([t.name for t in taxa])
 Phylo._hasnode(tr::RootedTree, tax::NCBITaxon) = Phylo._hasnode(tr, tax.name)
 Phylo._getnode(tr::RootedTree, tax::NCBITaxon) = Phylo._getnode(tr, tax.name)
 Phylo._createnode!(tr::RootedTree, tax::NCBITaxon) = Phylo._createnode!(tr, tax.name)
 ```
 
-```@example treee
+```@example tree
 tree = RootedTree(tree_leaves)
 ```
 

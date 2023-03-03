@@ -1,4 +1,4 @@
-using Documenter, NCBITaxonomy
+using Documenter, NCBITaxonomy, AbstractTrees
 
 makedocs(
     sitename="NCBITaxonomy",
