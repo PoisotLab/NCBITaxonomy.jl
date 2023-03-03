@@ -6,7 +6,6 @@ function calls `descendants` internally, so it might not be the optimal way when
 dealing with large groups.
 """
 function descendantsfilter(t::NCBITaxon)
-    d = descendants(t)
-    df = _df_from_taxlist(d)
-    return namefinder(df)
+    desc = collect(AbstractTrees.PostOrderDFS(t))
+    return namefilter([d.id for d in desc])
 end
