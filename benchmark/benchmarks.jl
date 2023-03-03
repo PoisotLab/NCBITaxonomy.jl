@@ -43,9 +43,9 @@ SUITE["traversal"]["children"] = @benchmarkable AbstractTrees.children(ncbi"Mono
 SUITE["traversal"]["parent"] = @benchmarkable AbstractTrees.parent(ncbi"Monogenea")
 
 SUITE["traversal"]["in root"] =
-    @benchmarkable AbstractTrees.parent(ncbi"Lamellodiscus elegans", ncbi"Monogenea")
+    @benchmarkable AbstractTrees.inroot(ncbi"Lamellodiscus elegans", ncbi"Monogenea")
 
-SUITE["traversal"]["lineage"] = @benchmarkable lineage(ncbi"Lamellodiscus vulgaris")
+SUITE["traversal"]["lineage"] = @benchmarkable lineage(ncbi"Lamellodiscus ignoratus")
 
 SUITE["traversal"]["common ancestor (pair)"] =
     @benchmarkable commonancestor(ncbi"Lamellodiscus", ncbi"Dactylogyrus")

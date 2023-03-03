@@ -32,27 +32,6 @@ can get a unique list of them:
 taxo_groups = unique([tax["taxa"] for tax in species])
 ```
 
-In order to speed-up the search, and make sure that the names match, we will
-create a series of `namefilter`s, based on the descendants of these taxa.
-
-```@example portal
-portalfilters = Dict(
-    "Bird" => descendantsfilter(ncbi"Aves"),
-    "Rodent" => rodentfilter(),
-    "Reptile" => descendantsfilter(ncbi"Sauria"),
-    "Rabbit" => descendantsfilter(ncbi"Lagomorpha"),
-)
-```
-
-In practice, because the `descendantfilter` (and any `*filter`) functions return
-a `DataFrame`, we could save the content of the groups; this is particularly
-important, because the construction of a name finder required to traverse the
-entire tree under the root taxon, which is going to be time consuming for larger
-groups (such as, for example, *Aves*). If we had the guarantee that the names
-are all scientific names, we could further refine the dataframes, but this is
-not the case here. In any case, having these filters at hand is going to allow
-us to limit the searches to the pool of correct taxa.
-
 We will store our results in a data frame:
 
 ```@example portal
@@ -62,7 +41,9 @@ cleanup = DataFrame(
     name = String[],
     rank = Symbol[],
     order = String[],
-    taxid = Int[]
+    taxid = Int[],
+    same = Bool[],
+    fuzzy = Bool[]
 )
 ```
 
@@ -73,11 +54,13 @@ with them:
 for sp in species
     portal_name = sp["species"] == "sp." ? sp["genus"] : sp["genus"]*" "*sp["species"]
     local ncbi_tax
+    local fuzzy = false
     try
-        ncbi_tax = taxon(portalfinders[species["taxa"]], portal_name)
+        ncbi_tax = taxon(portal_name)
     catch y
         if isa(y, NameHasNoDirectMatch)
-            ncbi_tax = taxon(portalfinders[species["taxa"]], portal_name; strict=false)
+            fuzzy = true
+            ncbi_tax = taxon(portal_name; strict=false)
         else
             continue
         end
@@ -87,7 +70,7 @@ for sp in species
         (
             sp["species_id"], portal_name, ncbi_tax.name, rank(ncbi_tax),
             first(filter(t -> isequal(:order)(rank(t)), lineage(ncbi_tax))).name,
-            ncbi_tax.id
+            ncbi_tax.id, portal_name == ncbi_tax.name, fuzzy
         )
     )
 end
@@ -104,3 +87,33 @@ vernacular, or spelling issues:
 ```@example portal
 filter(r -> r.portal != r.name, cleanup)
 ```
+
+Out of these, some required to use fuzzy matching to get a proper name, so we
+can look at there taxa, as they are likely to require manual curation:
+
+```@example portal
+filter(r -> r.fuzzy, cleanup)
+```
+
+Out of these, only `Lizard` has a strange identification as a `Hemiptera`:
+
+```@example portal
+filter(t -> isequal(:class)(rank(t)), lineage(ncbi"Lisarda"))
+```
+
+Right. We can dig into this example a little more, because it shows how much
+*data entry* can condition the success of name finding.
+
+```@example portal
+similarnames("Lizard"; threshold=0.7)
+```
+
+The *Lisarda* taxon (which is an insect!) is the closest match, simply because
+"Lizards" is not a classification we can use -- lizards are a paraphyletic
+group, containing a handful of different groups. Based on the information
+available, the only information we can say about the taxon identified as
+"Lizards" is that it belongs to *Squamata*.
+
+## Finding common ancestors
+
+We 
