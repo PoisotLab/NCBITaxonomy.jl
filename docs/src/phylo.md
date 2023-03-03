@@ -5,7 +5,7 @@ tree in the `Phylo.jl` package, then plot it. This example also serves as a
 showcase for the support of `AbstractTrees.jl`.
 
 ```@example tree
-
+using Plots
 using Phylo
 using NCBITaxonomy
 using AbstractTrees
@@ -31,10 +31,17 @@ We can double-check that these taxa all have the correct common ancestor:
 commonancestor(tree_leaves)
 ```
 
-At this point, we can start creating our tree object:
+At this point, we can start creating our tree object. Before we do this, we will add a few overloads to 
 
 ```@example treee
-tree = RootedTree([sp.name for sp in tree_leaves])
+Phylo.RootedTree(taxa::Vector{NCBITaxon}) = RootedTree([t.name for t in taxa])
+Phylo._hasnode(tr::RootedTree, tax::NCBITaxon) = Phylo._hasnode(tr, tax.name)
+Phylo._getnode(tr::RootedTree, tax::NCBITaxon) = Phylo._getnode(tr, tax.name)
+Phylo._createnode!(tr::RootedTree, tax::NCBITaxon) = Phylo._createnode!(tr, tax.name)
+```
+
+```@example treee
+tree = RootedTree(tree_leaves)
 ```
 
 The next step is to look at the lineage of all taxa, and add the required nodes
@@ -46,11 +53,11 @@ the `children` function to get the relationships.
 
 ```@example tree
 for node in AbstractTrees.PostOrderDFS(tree_root)
-    hasnode(tree, node.name) || createnode!(tree, node.name)
+    hasnode(tree, node) || createnode!(tree, node)
     sub_nodes = AbstractTrees.children(node)
     if ~isempty(sub_nodes)
         for sub_node in sub_nodes
-            createbranch!(tree, node.name, sub_node.name, 1.0)
+            createbranch!(tree, node, sub_node, 1.0)
         end
     end
 end
