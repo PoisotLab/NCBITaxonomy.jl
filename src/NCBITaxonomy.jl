@@ -44,11 +44,11 @@ select!(nodes_table, Not(:hidden_subtree))
 select!(nodes_table, Not(:comments))
 select!(nodes_table, Not(:embl))
 
-nodes_table = innerjoin(nodes_table, division_table; on=:division_id)
+nodes_table = innerjoin(nodes_table, division_table; on = :division_id)
 select!(nodes_table, Not(:division_id))
 
 names_table = leftjoin(
-    names_table, unique(select(nodes_table, [:tax_id, :rank])); on=:tax_id
+    names_table, unique(select(nodes_table, [:tax_id, :rank])); on = :tax_id,
 )
 
 include("taxon.jl")

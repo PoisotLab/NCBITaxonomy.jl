@@ -9,7 +9,7 @@ end
 
 function Base.showerror(io::IO, e::IDNotFoundInBackbone)
     message = "The TAX ID $(e.id) is not in the current version of the backbone."
-    print(io, message)
+    return print(io, message)
 end
 
 """
@@ -29,7 +29,7 @@ function Base.showerror(io::IO, e::NameHasNoDirectMatch)
     message *= "→ do a lowercase search with `lowercase=true`\n"
     message *= "→ do a fuzzy search with `strict=false`\n"
     message *= "→ look at the output of `similarnames(\"$(e.name)\")`"
-    print(io, message)
+    return print(io, message)
 end
 
 """
@@ -58,6 +58,5 @@ function Base.showerror(io::IO, e::NameHasMultipleMatches)
     end
     message *= "Please pick the correct taxa\n"
     message *= "You can get a list of correct taxa using `alternativetaxa(\"$(e.name)\")`\n"
-    print(io, message)
+    return print(io, message)
 end
-

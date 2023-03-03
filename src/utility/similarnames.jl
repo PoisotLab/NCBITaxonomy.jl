@@ -15,6 +15,8 @@ That being said, the taxa/score pairs will always be equal. For example, the
 string `"mouse"` will match both the vernacular for Bryophyta (`"mosses"`) and
 its synonym (`"Musci"`) with an equal dissimilarity under the Levenshtein
 distance - the pair will be returned only once.
+
+Additional keywords are `rank` (limit to a given rank) and `onlysynonyms`.
 """
 function similarnames(name::AbstractString; kwargs...)
     df = NCBITaxonomy.names_table
@@ -26,14 +28,28 @@ end
 
 Generic version of similarnames
 """
-function similarnames(df::DataFrame, name::AbstractString; dist::Type{SD}=Levenshtein, threshold::Float64=0.8) where {SD <: StringDistance}
-    distance_matches = findall(name, df.name, dist(); min_score=threshold)
+function similarnames(
+    df::DataFrame,
+    name::AbstractString;
+    dist::Type{SD} = Levenshtein,
+    threshold::Float64 = 0.8,
+    rank::Union{Nothing, Symbol} = nothing,
+    onlysynonyms::Bool = false,
+) where {SD <: StringDistance}
+    if !isnothing(rank)
+        @assert rank ∈ unique(df.rank)
+        df = df[findall(isequal(rank), df.rank), :]
+    end
+    if onlysynonyms
+        df = df[findall(isequal(NCBITaxonomy.class_synonym), df.class), :]
+    end
+    distance_matches = findall(name, df.name, dist(); min_score = threshold)
     _names = df.name[distance_matches]
     _ids = df.tax_id[distance_matches]
     _distances = [compare(name, _name, dist()) for _name in _names]
     _taxa = taxon.(_ids)
-    _choices = [Pair(_taxa[i], _distances[i]) for i in 1:length(_taxa)]
-    sort!(_choices; by=(x) -> x.second, rev=true)
+    _choices = [Pair(_taxa[i], _distances[i]) for i in axes(_taxa, 1)]
+    sort!(_choices; by = (x) -> x.second, rev = true)
     return unique(_choices)
 end
 

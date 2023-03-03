@@ -1,9 +1,9 @@
 """
-   _children(id::T) where {T <: Int}
+_children(id::T) where {T <: Int}
 
 Internal function to retrieve the id of the children of a given node.
 """
-function _children(id::T) where {T<:Int}
+function _children(id::T) where {T <: Int}
     positions = findall(isequal(id), NCBITaxonomy.nodes_table.parent_tax_id)
     return NCBITaxonomy.nodes_table.tax_id[positions]
 end
@@ -13,13 +13,13 @@ end
 
 Recursively get the descendants of a given node.
 """
-function _descendants(id::T) where {T<:Int}
+function _descendants(id::T) where {T <: Int}
     c = _children(id)
     isempty(c) && return id
     return vcat(id, _descendants(c)...)
 end
 
-_descendants(ids::Vector{T}) where {T<:Int} = map(_descendants, ids)
+_descendants(ids::Vector{T}) where {T <: Int} = map(_descendants, ids)
 
 """
     children(t::NCBITaxon)
