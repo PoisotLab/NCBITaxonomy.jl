@@ -6,7 +6,7 @@ will be the valid scientic name associated to this id.
 """
 function taxon(df::DataFrame, id::Integer)
     matched_index = findfirst(isequal(id), df.tax_id)
-    isempty(matched_index) && throw(IDNotFoundInBackbone(id))
+    isnothing(matched_index) && throw(IDNotFoundInBackbone(id))
     return NCBITaxon(df.name[matched_index], id)
 end
 
