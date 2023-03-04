@@ -1,21 +1,16 @@
 """
-    taxon(df::DataFrame, id::Integer)
-
-Returns a fully formed `NCBITaxon` based on its id. The `name` of the taxon
-will be the valid scientic name associated to this id.
-"""
-function taxon(df::DataFrame, id::Integer)
-    matched_index = findfirst(isequal(id), df.tax_id)
-    isnothing(matched_index) && throw(IDNotFoundInBackbone(id))
-    return NCBITaxon(df.name[matched_index], id)
-end
-
-"""
     taxon(id::Integer)
 
-Performs a search in the entire taxonomy backbone based on a known ID.
+Performs a search in the entire taxonomy backbone based on a known ID. This is
+the fastest way to get to a taxon, and is used internally by the tree traversal methods.
 """
-taxon(id::Integer) = taxon(NCBITaxonomy.scinames, id)
+function taxon(id::Integer)
+    (id in NCBITaxonomy.scinames.tax_id) || throw(IDNotFoundInBackbone(id))
+    return NCBITaxon(
+        only(NCBITaxonomy.groupedscinames[id].name),
+        only(NCBITaxonomy.groupedscinames[id].tax_id)
+    )
+end
 
 function _id_from_name(name::AbstractString; kwargs...)
     return _id_from_name(NCBITaxonomy.taxonomy, name; kwargs...)
