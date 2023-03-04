@@ -54,6 +54,8 @@ function taxonomicdistance!(
             D[i, j] = D[j, i] = minimum([get(d, s, d[:fallback]) for s in shared])
         end
     end
+    l = length(tax)
+    D[l, l] = strict ? get(d, rank(tax[l]), d[:fallback]) : 0.0
     return D
 end
 
