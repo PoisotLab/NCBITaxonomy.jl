@@ -7,8 +7,9 @@ import Downloads
 
 # There are two things we need for the build process: the types, and the
 # location of the files
-include(joinpath(@__DIR__, "..", "src", "hydrate.jl"))
+include(joinpath(@__DIR__, "hydrate.jl"))
 include(joinpath(@__DIR__, "..", "src", "types.jl"))
+include(joinpath(@__DIR__, "..", "src", "local_archive_path.jl"))
 
 # These steps are meant to download and unpack the taxonomy as needed, which is
 # to say as unfrequently as possible
