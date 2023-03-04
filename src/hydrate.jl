@@ -55,17 +55,16 @@ function _unpack_if_needed(local_path, remote_info, remote_checksum)
     need_update = false
     if ~isfile(local_archive)
         local_archive = _download_archive(local_path, remote_info)
-        local_checksum = bytes2hex(open(MD5.md5, local_archive))
         need_update = true
-    else
-        local_checksum = bytes2hex(open(MD5.md5, local_archive))
     end
+    local_checksum = bytes2hex(open(MD5.md5, local_archive))
     if local_checksum != remote_checksum
         local_archive = _download_archive(local_path, remote_info)
         local_checksum = bytes2hex(open(MD5.md5, local_archive))
         need_update = true
     end
     if need_update
+        rm(joinpath(local_path, "dump"); force=true)
         Tar.extract(GZip.open(local_archive), joinpath(local_path, "dump"))
     end
     return joinpath(local_path, "dump")

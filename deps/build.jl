@@ -5,23 +5,22 @@ import Arrow
 import DataFrames
 import Downloads
 
+# There are two things we need for the build process: the types, and the
+# location of the files
+include(joinpath(@__DIR__, "..", "src", "hydrate.jl"))
+include(joinpath(@__DIR__, "..", "src", "types.jl"))
+
 # These steps are meant to download and unpack the taxonomy as needed, which is
 # to say as unfrequently as possible
-include(joinpath(@__DIR__, "..", "src", "hydrate.jl"))
 remote_info = _remote_archive_path()
 local_path = _local_archive_path()
 remote_checksum = _get_current_remote_checksum(local_path, remote_info)
 local_archive = _unpack_if_needed(local_path, remote_info, remote_checksum)
 
-@info "Materializing the taxonomy"
-
 # We will store the tables used by the package in the tables folder
 tables_path = _create_or_get_tables_path(local_path)
 
 # Utility functions
-
-include(joinpath(@__DIR__, "..", "src", "types.jl"))
-
 function _class_to_enum(c::T) where {T <: String}
     c = replace(c, " " => "_")
     c = replace(c, "-" => "_")
@@ -38,8 +37,8 @@ issue.
 function _materialize_data(::Type{T}, v) where {T}
     if v != ""
         T <: Number && return parse(T, v)
-        T <: Union{Bool,Missing} && return parse(Bool, v)
-        T <: Union{Int,Missing} && return parse(Int, v)
+        T <: Union{Bool, Missing} && return parse(Bool, v)
+        T <: Union{Int, Missing} && return parse(Int, v)
         T <: Symbol && return Symbol(v)
         T <: NCBINameClass && return _class_to_enum(v)
         return v
@@ -61,44 +60,53 @@ function _build_arrow_file(df, dump_file)
     return df
 end
 
-# Get the data
-
-@info "Building the names file"
-ncbi_names_file_in = joinpath(taxpath, "dump", "names.dmp")
-ncbi_names_file_out = joinpath(taxpath, "tables", "names.arrow")
-ncbi_names = DataFrames.DataFrame(tax_id=Int[], name=String[], unique_name=Union{String,Missing}[], class=NCBINameClass[])
+# Get the data for the names
+ncbi_names_file_in = joinpath(local_path, "dump", "names.dmp")
+ncbi_names_file_out = joinpath(tables_path, "names.arrow")
+ncbi_names = DataFrames.DataFrame(;
+    tax_id = Int[],
+    name = String[],
+    unique_name = Union{String, Missing}[],
+    class = NCBINameClass[],
+)
 names_df = _build_arrow_file(ncbi_names, ncbi_names_file_in)
 names_df.class = Int.(names_df.class)
 Arrow.write(ncbi_names_file_out, names_df)
 names_df = nothing
 GC.gc()
 
-@info "Building the division file"
-ncbi_division_file_in = joinpath(taxpath, "dump", "division.dmp")
-ncbi_division_file_out = joinpath(taxpath, "tables", "division.arrow")
-ncbi_division = DataFrames.DataFrame(division_id=Int[], division_code=Symbol[], division_name=Symbol[], comments=Union{String,Missing}[])
+ncbi_division_file_in = joinpath(local_path, "dump", "division.dmp")
+ncbi_division_file_out = joinpath(tables_path, "division.arrow")
+ncbi_division = DataFrames.DataFrame(;
+    division_id = Int[],
+    division_code = Symbol[],
+    division_name = Symbol[],
+    comments = Union{String, Missing}[],
+)
 division_df = _build_arrow_file(ncbi_division, ncbi_division_file_in)
 Arrow.write(ncbi_division_file_out, division_df)
 division_df = nothing
 GC.gc()
 
-@info "Building the nodes file"
-ncbi_nodes_file_in = joinpath(taxpath, "dump", "nodes.dmp")
-ncbi_nodes_file_out = joinpath(taxpath, "tables", "nodes.arrow")
-ncbi_nodes = DataFrames.DataFrame(
-    tax_id=Int[], parent_tax_id=Int[],
-    rank=Symbol[],
-    embl=Union{String,Missing}[],
-    division_id=Int[], inherited_div=Union{Bool,Missing}[],
-    genetic_code_id=Int[], inherited_gc=Union{Bool,Missing}[], 
-    mitochondrial_genetic_code_id=Union{Int,Missing}[], inherited_mgc=Union{Bool,Missing}[],
-    genbank_hidden=Union{Bool,Missing}[],
-    hidden_subtree=Union{Bool,Missing}[],
-    comments=Union{String,Missing}[],
-    plastid_genetic_code_id=Union{Int,Missing}[], inherited_pgc=Union{Bool,Missing}[],
-    specified_species=Union{Bool,Missing}[],
-    hydrogenosome_code_id=Union{Int,Missing}[], inherited_hgc=Union{Bool,Missing}[]
-    )
+ncbi_nodes_file_in = joinpath(local_path, "dump", "nodes.dmp")
+ncbi_nodes_file_out = joinpath(tables_path, "nodes.arrow")
+ncbi_nodes = DataFrames.DataFrame(;
+    tax_id = Int[], parent_tax_id = Int[],
+    rank = Symbol[],
+    embl = Union{String, Missing}[],
+    division_id = Int[], inherited_div = Union{Bool, Missing}[],
+    genetic_code_id = Int[], inherited_gc = Union{Bool, Missing}[],
+    mitochondrial_genetic_code_id = Union{Int, Missing}[],
+    inherited_mgc = Union{Bool, Missing}[],
+    genbank_hidden = Union{Bool, Missing}[],
+    hidden_subtree = Union{Bool, Missing}[],
+    comments = Union{String, Missing}[],
+    plastid_genetic_code_id = Union{Int, Missing}[],
+    inherited_pgc = Union{Bool, Missing}[],
+    specified_species = Union{Bool, Missing}[],
+    hydrogenosome_code_id = Union{Int, Missing}[],
+    inherited_hgc = Union{Bool, Missing}[],
+)
 nodes_df = _build_arrow_file(ncbi_nodes, ncbi_nodes_file_in)
 Arrow.write(ncbi_nodes_file_out, nodes_df)
 nodes_df = nothing
