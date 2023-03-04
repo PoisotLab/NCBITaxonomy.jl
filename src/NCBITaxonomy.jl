@@ -11,21 +11,25 @@ tables_path = _create_or_get_tables_path(_local_archive_path())
 function __init__()
     name_date = mtime(joinpath(tables_path, "names.arrow"))
     over_30_days = time() - name_date >= 2.6e+6
-    if over_30_days 
-        @warn("Your local taxonomy version is over 30 days old, we recommend using `] build NCBITaxonomy` to get the most recent version.")
+    if over_30_days
+        @warn(
+            "Your local taxonomy version is over 30 days old, we recommend using `] build NCBITaxonomy` to get the most recent version."
+        )
     end
     return nothing
 end
 
 include("types.jl")
-export NCBITaxon, NCBINameClass, IDNotFoundInBackbone
+export NCBITaxon, NCBINameClass
 
 include("exceptions.jl")
-export NameHasNoDirectMatch, NameHasMultipleMatches
+export NameHasNoDirectMatch, NameHasMultipleMatches, IDNotFoundInBackbone
 
 # We load the core file with all we need in it
 include("read_taxonomy.jl")
 taxonomy = read_taxonomy(tables_path)
+scinames = filter(r -> r.class == NCBITaxonomy.class_scientific_name, taxonomy)
+groupedscinames = groupby(scinames, :tax_id)
 
 include("taxon.jl")
 export taxon, @ncbi_str

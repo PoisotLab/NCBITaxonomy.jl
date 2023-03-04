@@ -4,7 +4,7 @@
 Returns a subset of the names table where only the given taxids are present.
 """
 function namefilter(ids::Vector{T}) where {T <: Integer}
-    return leftjoin(DataFrame(; tax_id = ids), NCBITaxonomy.names_table; on = :tax_id)
+    return leftjoin(DataFrame(; tax_id = ids), NCBITaxonomy.taxonomy; on = :tax_id)
 end
 
 """

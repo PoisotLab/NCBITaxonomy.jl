@@ -15,10 +15,10 @@ end
 
 Performs a search in the entire taxonomy backbone based on a known ID.
 """
-taxon(id::Integer) = taxon(NCBITaxonomy.scinames_table, id)
+taxon(id::Integer) = taxon(NCBITaxonomy.scinames, id)
 
 function _id_from_name(name::AbstractString; kwargs...)
-    return _id_from_name(NCBITaxonomy.names_table, name; kwargs...)
+    return _id_from_name(NCBITaxonomy.taxonomy, name; kwargs...)
 end
 
 function _id_from_name(
@@ -91,7 +91,7 @@ The keywords are:
   - `onlysynonyms` (def. `false`) - limits the search to synonyms, which may be
     useful in case the taxonomy is particularly outdated
 """
-taxon(name::AbstractString; kwargs...) = taxon(NCBITaxonomy.names_table, name; kwargs...)
+taxon(name::AbstractString; kwargs...) = taxon(NCBITaxonomy.taxonomy, name; kwargs...)
 
 """
     taxon(df::DataFrame, name::AbstractString; kwargs...)
