@@ -18,7 +18,7 @@ end
 
 function _id_from_name(
     df::T,
-    name::AbstractString;
+    name::String;
     strict::Bool = true,
     dist::Type{SD} = Levenshtein,
     casesensitive::Bool = true,
