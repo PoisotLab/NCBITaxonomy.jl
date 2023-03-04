@@ -3,66 +3,20 @@ import GZip
 import Tar
 import Arrow
 import DataFrames
+import Downloads
 
-# URL for the taxonomy dump
-const ncbi_ftp = "https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/"
-const archive = ncbi_ftp * "new_taxdump.tar.gz"
-const checksum = archive * ".md5"
-
-if !haskey(ENV, "NCBITAXONOMY_PATH")
-    @warn """
-    The environmental variable NCBITAXONOMY_PATH is not set, so the tables will
-    be stored in your home directory. This is not ideal, and you really should set
-    the NCBITAXONOMY_PATH.
-
-    This can be done by adding `ENV["NCBITAXONOMY_PATH"]` in your Julia startup
-    file. The path will be created automatically if it does not exist.
-    """
-end
-const taxpath = get(ENV, "NCBITAXONOMY_PATH", joinpath(homedir(), "NCBITaxonomy"))
-ispath(taxpath) || mkpath(taxpath)
-
-chk_file = download(checksum)
-chk = split(readlines(chk_file)[1], " ")[1]
-@info "Checksum of the most recent NCBI taxonomy: $(chk)"
-
-function download_dump(url, chk, dest)
-    @info "Downloading the taxonomy data from $(url)"
-    if ispath(joinpath(taxpath, dest))
-        @info "Removing the previous version of the taxonomy"
-        rm(joinpath(taxpath, dest); force=true, recursive=true)
-        mkpath(joinpath(taxpath, dest))
-    else
-        mkpath(joinpath(taxpath, dest))
-    end
-    arc = download(url)
-    vrf = bytes2hex(open(MD5.md5, arc))
-    vrf == chk || throw(ErrorException("Wrong checksum for the NCBI taxonomy archive file - unable to download"))
-    write(joinpath(taxpath, ".checksum"), vrf)
-    Tar.extract(GZip.open(arc), joinpath(taxpath, dest))
-end
-
-# The next block is about making sure that we don't download something that has
-# not changed when we build the package. The taxonomy dump is not gigantic, but
-# there is no need to get it over and over again.
-if !isfile(joinpath(taxpath, ".checksum"))
-    @info "No local taxonomy checksum found"
-    download_dump(archive, chk, "dump")
-else
-    local_chk = readline(joinpath(taxpath, ".checksum"))
-    if local_chk != chk
-        @info "Local and remote checksum do not match"
-        download_dump(archive, chk, "dump")
-    else
-        @info "Local taxonomy dump ($(local_chk)) is up to date"
-    end
-end
+# These steps are meant to download and unpack the taxonomy as needed, which is
+# to say as unfrequently as possible
+include(joinpath(@__DIR__, "..", "src", "hydrate.jl"))
+remote_info = _remote_archive_path()
+local_path = _local_archive_path()
+remote_checksum = _get_current_remote_checksum(local_path, remote_info)
+local_archive = _unpack_if_needed(local_path, remote_info, remote_checksum)
 
 @info "Materializing the taxonomy"
 
 # We will store the tables used by the package in the tables folder
-tables = joinpath(taxpath, "tables")
-ispath(tables) || mkpath(tables)
+tables_path = _create_or_get_tables_path(local_path)
 
 # Utility functions
 

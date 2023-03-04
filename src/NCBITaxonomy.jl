@@ -4,24 +4,17 @@ using Arrow
 using StringDistances
 using AbstractTrees
 
-if !haskey(ENV, "NCBITAXONOMY_PATH")
-    @warn """
-    The environmental variable NCBITAXONOMY_PATH is not set, so the tables will
-    be stored in the package path. This is not ideal, and you really should set
-    the NCBITAXONOMY_PATH.
-
-    This can be done by adding `ENV["NCBITAXONOMY_PATH"]` in your Julia startup
-    file. The path will be created automatically if it does not exist.
-    """
-end
-const taxpath = get(ENV, "NCBITAXONOMY_PATH", joinpath(homedir(), "NCBITaxonomy"))
-ispath(taxpath) || mkpath(taxpath)
+# Point to where the taxonomy is located
+include("hydrate.jl")
+local_path = _local_archive_path()
 
 function __init__()
-    name_date = mtime(joinpath(taxpath, "tables", "names.arrow"))
-    return time() - name_date >= 2.6e+6 && @warn(
-        "Your local taxonomy version is over 30 days old, we recommend using `] build NCBITaxonomy` to get the most recent version."
-    )
+    name_date = mtime(joinpath(local_path, "tables", "names.arrow"))
+    over_30_days = time() - name_date >= 2.6e+6
+    if over_30_days 
+        @warn("Your local taxonomy version is over 30 days old, we recommend using `] build NCBITaxonomy` to get the most recent version.")
+    end
+    return nothing
 end
 
 include("types.jl")
