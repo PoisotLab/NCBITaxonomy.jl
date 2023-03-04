@@ -23,8 +23,7 @@ end
 Returns a subset of the names table for all names under a given NCBI division.
 """
 function namefilter(division::Symbol)
-    ids = findall(isequal(division), NCBITaxonomy.nodes_table.division_code)
-    return namefilter(NCBITaxonomy.nodes_table.tax_id[ids])
+    return namefilter(filter(r -> r.division_code == division, NCBITaxonomy.taxonomy))
 end
 
 """
@@ -34,6 +33,5 @@ Returns a subset of the names table for all names under a number of multiple
 NCBI divisions.
 """
 function namefilter(division::Vector{Symbol})
-    ids = findall(x -> x in division, NCBITaxonomy.nodes_table.division_code)
-    return namefilter(NCBITaxonomy.nodes_table.tax_id[ids])
+    return namefilter(filter(r -> r.division_code in division, NCBITaxonomy.taxonomy))
 end
