@@ -7,8 +7,8 @@ the fastest way to get to a taxon, and is used internally by the tree traversal 
 function taxon(id::Integer)
     (id in NCBITaxonomy.scinames.tax_id) || throw(IDNotFoundInBackbone(id))
     return NCBITaxon(
-        only(NCBITaxonomy.groupedscinames[(tax_id = id, )].name),
-        only(NCBITaxonomy.groupedscinames[(tax_id = id, )].tax_id)
+        only(NCBITaxonomy.groupedscinames[(tax_id = id,)].name),
+        only(NCBITaxonomy.groupedscinames[(tax_id = id,)].tax_id),
     )
 end
 
@@ -17,7 +17,7 @@ function _id_from_name(name::AbstractString; kwargs...)
 end
 
 function _id_from_name(
-    df::DataFrame,
+    df::T,
     name::AbstractString;
     strict::Bool = true,
     dist::Type{SD} = Levenshtein,
@@ -25,7 +25,7 @@ function _id_from_name(
     rank::Union{Nothing, Symbol} = nothing,
     preferscientific::Bool = false,
     onlysynonyms::Bool = false,
-) where {SD <: StringDistance}
+) where {SD <: StringDistance, T <: AbstractDataFrame}
     if !isnothing(rank)
         @assert rank ∈ unique(df.rank)
         df = df[findall(isequal(rank), df.rank), :]
@@ -94,7 +94,7 @@ taxon(name::AbstractString; kwargs...) = taxon(NCBITaxonomy.taxonomy, name; kwar
 Additional method for `taxon` with an extra dataframe argument, used most often
 with a `namefinder`. Accepts the usual `taxon` keyword arguments.
 """
-function taxon(df::DataFrame, name::AbstractString; kwargs...)
+function taxon(df::T, name::String; kwargs...) where {T <: AbstractDataFrame}
     id = _id_from_name(df, name; kwargs...)
     isnothing(id) && return nothing
     return taxon(id)
