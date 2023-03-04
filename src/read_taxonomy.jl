@@ -30,7 +30,7 @@ function read_taxonomy(tables_path)
     GC.gc()
 
     select!(names_table, Not(:unique_name))
-    dropmissing!(names_table, [:rank, :parent_tax_id, :division_code])
+    #dropmissing!(names_table, [:rank, :parent_tax_id, :division_code])
 
     return names_table
 
