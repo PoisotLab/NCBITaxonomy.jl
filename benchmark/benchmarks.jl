@@ -13,6 +13,9 @@ tax = [
 
 mf = mammalfilter()
 
+mf_t = mammalfilter(true)
+pf = primatefilter()
+
 const SUITE = BenchmarkGroup()
 
 # Construction of name finders
@@ -40,6 +43,14 @@ SUITE["taxon search"]["lowercase with finder"] =
 
 SUITE["taxon search"]["scientific with finder"] =
     @benchmarkable taxon(mf, "Sus scrofa"; preferscientific = true)
+
+SUITE["taxon search"]["pan - all defaults"] = @benchmarkable taxon("Pan")
+
+SUITE["taxon search"]["pan - mammal finder"] = @benchmarkable taxon(mf_t, "Pan")
+
+SUITE["taxon search"]["pan - primate finder"] = @benchmarkable taxon(pf, "Pan")
+
+SUITE["taxon search"]["pan - string annotation"] = @benchmarkable ncbi"Pan"
 
 # Ability to traverse a tree
 
