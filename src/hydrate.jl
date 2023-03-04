@@ -54,16 +54,19 @@ function _unpack_if_needed(local_path, remote_info, remote_checksum)
     local_archive = joinpath(local_path, remote_info.archive)
     need_update = false
     if ~isfile(local_archive)
+        @warn "There is no local taxonomy dump, we will download one"
         local_archive = _download_archive(local_path, remote_info)
         need_update = true
     end
     local_checksum = bytes2hex(open(MD5.md5, local_archive))
     if local_checksum != remote_checksum
+        @warn "The checksum of the taxonomy dump does not match the remote"
         local_archive = _download_archive(local_path, remote_info)
         local_checksum = bytes2hex(open(MD5.md5, local_archive))
         need_update = true
     end
     if need_update
+        @warn "We are unpacking the local taxonomy dump"
         rm(joinpath(local_path, "dump"); force=true)
         Tar.extract(GZip.open(local_archive), joinpath(local_path, "dump"))
     end
