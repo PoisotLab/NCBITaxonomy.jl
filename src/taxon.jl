@@ -7,8 +7,8 @@ the fastest way to get to a taxon, and is used internally by the tree traversal 
 function taxon(id::Integer)
     (id in NCBITaxonomy.scinames.tax_id) || throw(IDNotFoundInBackbone(id))
     return NCBITaxon(
-        only(NCBITaxonomy.groupedscinames[id].name),
-        only(NCBITaxonomy.groupedscinames[id].tax_id)
+        only(NCBITaxonomy.groupedscinames[(tax_id = id, )].name),
+        only(NCBITaxonomy.groupedscinames[(tax_id = id, )].tax_id)
     )
 end
 

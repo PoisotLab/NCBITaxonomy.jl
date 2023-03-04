@@ -4,5 +4,5 @@
 Returns the rank of a taxon.
 """
 function rank(tax::NCBITaxon)
-    return only(NCBITaxonomy.groupedscinames[tax.id].rank)
+    return only(NCBITaxonomy.groupedscinames[(tax_id = tax.id,)].rank)
 end
