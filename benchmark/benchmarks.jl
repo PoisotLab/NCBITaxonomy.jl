@@ -2,6 +2,17 @@ using BenchmarkTools
 using NCBITaxonomy
 using AbstractTrees
 
+# Setup
+tax = [
+    ncbi"Lamellodiscus",
+    ncbi"Dactylogyrus",
+    ncbi"Paradiplozoon",
+    ncbi"Diplectanum",
+    ncbi"Echinoplectanum",
+]
+
+mf = mammalfilter()
+
 const SUITE = BenchmarkGroup()
 
 # Construction of name finders
@@ -13,9 +24,6 @@ SUITE["name finders"]["mammals"] = @benchmarkable mammalfilter(false)
 SUITE["name finders"]["mammals (inclusive)"] = @benchmarkable mammalfilter(true)
 
 SUITE["name finders"]["phage"] = @benchmarkable phagefilter()
-
-# Prepare a mammal filter next
-mf = mammalfilter()
 
 # Ability to locate taxa
 
@@ -49,10 +57,16 @@ SUITE["traversal"]["lineage"] = @benchmarkable lineage(ncbi"Lamellodiscus ignora
 SUITE["traversal"]["common ancestor (pair)"] =
     @benchmarkable commonancestor(ncbi"Lamellodiscus", ncbi"Dactylogyrus")
 
-SUITE["traversal"]["common ancestor (array)"] = @benchmarkable commonancestor([
-    ncbi"Lamellodiscus",
-    ncbi"Dactylogyrus",
-    ncbi"Paradiplozoon",
-    ncbi"Diplectanum",
-    ncbi"Echinoplectanum",
-])
+SUITE["traversal"]["common ancestor (array)"] = @benchmarkable commonancestor(tax)
+
+# Utility functions
+
+SUITE["utilities"] = BenchmarkGroup(["utilities", "quality of life"])
+
+SUITE["utilities"]["distance matrix (no allocation)"] =
+    @benchmarkable taxonomicdistance(tax)
+
+D = zeros(Float64, (length(tax), length(tax)))
+
+SUITE["utilities"]["distance matrix (pre-allocation)"] =
+    @benchmarkable taxonomicdistance!(D, tax)
