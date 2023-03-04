@@ -29,6 +29,9 @@ function read_taxonomy(tables_path)
     division_table = nothing
     GC.gc()
 
+    select!(names_table, Not(:unique_name))
+    dropmissing!(names_table, [:rank, :parent_tax_id, :division_code])
+
     return names_table
 
 end
