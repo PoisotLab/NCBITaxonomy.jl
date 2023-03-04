@@ -21,7 +21,7 @@ function read_taxonomy(tables_path)
 
     names_table = leftjoin(
         names_table,
-        unique(select(nodes_table, [:tax_id, :rank, :parent_tax_id]));
+        unique(select(nodes_table, [:tax_id, :rank, :parent_tax_id, :division_code]));
         on = :tax_id,
     )
 
