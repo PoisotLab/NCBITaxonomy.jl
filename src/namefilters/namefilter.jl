@@ -23,7 +23,7 @@ end
 Returns a subset of the names table for all names under a given NCBI division.
 """
 function namefilter(division::Symbol)
-    return filter(r -> r.division_code == division, NCBITaxonomy.taxonomy)
+    return groupby(NCBITaxonomy.taxonomy, :division_code)[(division_code = division, )]
 end
 
 """
@@ -33,5 +33,5 @@ Returns a subset of the names table for all names under a number of multiple
 NCBI divisions.
 """
 function namefilter(division::Vector{Symbol})
-    return filter(r -> r.division_code in division, NCBITaxonomy.taxonomy)
+    return groupby(NCBITaxonomy.taxonomy, :division_code)[[(division_code = div,) for div in division]]
 end
