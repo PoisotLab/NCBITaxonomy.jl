@@ -1,59 +1,38 @@
 module NCBITaxonomy
 using DataFrames
-using Arrow
+import Arrow
 using StringDistances
 using AbstractTrees
 
-if !haskey(ENV, "NCBITAXONOMY_PATH")
-    @warn """
-    The environmental variable NCBITAXONOMY_PATH is not set, so the tables will
-    be stored in the package path. This is not ideal, and you really should set
-    the NCBITAXONOMY_PATH.
-
-    This can be done by adding `ENV["NCBITAXONOMY_PATH"]` in your Julia startup
-    file. The path will be created automatically if it does not exist.
-    """
-end
-const taxpath = get(ENV, "NCBITAXONOMY_PATH", joinpath(homedir(), "NCBITaxonomy"))
-ispath(taxpath) || mkpath(taxpath)
+# Point to where the taxonomy is located
+include("local_archive_path.jl")
+tables_path = _create_or_get_tables_path(_local_archive_path())
 
 function __init__()
-    name_date = mtime(joinpath(taxpath, "tables", "names.arrow"))
-    return time() - name_date >= 2.6e+6 && @warn(
-        "Your local taxonomy version is over 30 days old, we recommend using `] build NCBITaxonomy` to get the most recent version."
-    )
+    name_date = mtime(joinpath(tables_path, "names.arrow"))
+    over_30_days = time() - name_date >= 2.6e+6
+    if over_30_days
+        @warn(
+            "Your local taxonomy version is over 30 days old, we recommend using `] build NCBITaxonomy` to get the most recent version."
+        )
+    end
+    return nothing
 end
 
 include("types.jl")
-export NCBITaxon, NCBINameClass, IDNotFoundInBackbone
+export NCBITaxon, NCBINameClass
 
 include("exceptions.jl")
-export NameHasNoDirectMatch, NameHasMultipleMatches
+export NameHasNoDirectMatch, NameHasMultipleMatches, IDNotFoundInBackbone
 
-names_table = DataFrame(Arrow.Table(joinpath(taxpath, "tables", "names.arrow")))
-names_table.class = NCBINameClass.(names_table.class)
-names_table.lowercase = lowercase.(names_table.name)
-
-division_table = DataFrame(Arrow.Table(joinpath(taxpath, "tables", "division.arrow")))
-select!(division_table, Not(:comments))
-
-nodes_table = DataFrame(Arrow.Table(joinpath(taxpath, "tables", "nodes.arrow")))
-select!(nodes_table, Not(r"inherited_"))
-select!(nodes_table, Not(r"_code_id"))
-select!(nodes_table, Not(:genbank_hidden))
-select!(nodes_table, Not(:hidden_subtree))
-select!(nodes_table, Not(:comments))
-select!(nodes_table, Not(:embl))
-
-nodes_table = innerjoin(nodes_table, division_table; on = :division_id)
-select!(nodes_table, Not(:division_id))
-
-names_table = leftjoin(
-    names_table,
-    unique(select(nodes_table, [:tax_id, :rank, :parent_tax_id]));
-    on = :tax_id,
-)
-scinames_table = names_table[findall(names_table.class .== class_scientific_name), :]
+# We load the core file with all we need in it
+include("read_taxonomy.jl")
+taxonomy = read_taxonomy(tables_path)
+scinames = filter(r -> r.class == NCBITaxonomy.class_scientific_name, taxonomy)
+groupedscinames = groupby(scinames, :tax_id)
+groupedtaxonomy = groupby(taxonomy, :tax_id)
+divisions = groupby(taxonomy, :division_code)
+ranks = groupby(taxonomy, :rank)
 
 include("taxon.jl")
 export taxon, @ncbi_str
