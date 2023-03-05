@@ -5,16 +5,16 @@ This function will return `nothing` if no vernacular name is known, and an array
 of names if found. It searches the "common name" and "genbank common name"
 category of the NCBI taxonomy name table.
 """
-function vernacular(t::NCBITaxon)
-    x = NCBITaxonomy.taxonomy[findall(NCBITaxonomy.taxonomy.tax_id .== t.id), :]
-    p = findall(
-        !isnothing,
-        indexin(
-            x.class,
-            [NCBITaxonomy.class_common_name, NCBITaxonomy.class_genbank_common_name],
-        ),
+function vernacular(tax::NCBITaxon)
+    vern = filter(
+        r -> r.class in
+        [NCBITaxonomy.class_common_name, NCBITaxonomy.class_genbank_common_name],
+        NCBITaxonomy.groupedtaxonomy[(tax_id = tax.id,)],
     )
-    return length(p) == 0 ? nothing : x.name[p]
+    if isempty(vern)
+        return nothing
+    end
+    return vern.name
 end
 
 """
@@ -23,10 +23,15 @@ end
 This function will return `nothing` if no synonyms exist, and an array of names
 if they do. It returns all of the
 """
-function synonyms(t::NCBITaxon)
-    x = NCBITaxonomy.taxonomy[findall(NCBITaxonomy.taxonomy.tax_id .== t.id), :]
-    p = findall(isequal(NCBITaxonomy.class_synonym), x.class)
-    return length(p) == 0 ? nothing : x.name[p]
+function synonyms(tax::NCBITaxon)
+    syno = filter(
+        r -> r.class == NCBITaxonomy.class_synonym,
+        NCBITaxonomy.groupedtaxonomy[(tax_id = tax.id,)],
+    )
+    if isempty(syno)
+        return nothing
+    end
+    return syno.name
 end
 
 """
@@ -36,7 +41,10 @@ This function will return `nothing` if no authority exist, and a string with the
 authority if found.
 """
 function authority(tax::NCBITaxon)
-    auth = filter(r -> r.class == NCBITaxonomy.class_authority, NCBITaxonomy.groupedtaxonomy[(tax_id = tax.id, )])
+    auth = filter(
+        r -> r.class == NCBITaxonomy.class_authority,
+        NCBITaxonomy.groupedtaxonomy[(tax_id = tax.id,)],
+    )
     if isempty(auth)
         return nothing
     end
