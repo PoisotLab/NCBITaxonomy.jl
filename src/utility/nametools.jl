@@ -35,8 +35,10 @@ end
 This function will return `nothing` if no authority exist, and a string with the
 authority if found.
 """
-function authority(t::NCBITaxon)
-    x = NCBITaxonomy.taxonomy[findall(NCBITaxonomy.taxonomy.tax_id .== t.id), :]
-    p = findall(isequal(NCBITaxonomy.class_authority), x.class)
-    return length(p) == 0 ? nothing : first(x.name[p])
+function authority(tax::NCBITaxon)
+    auth = filter(r -> r.class == NCBITaxonomy.class_authority, NCBITaxonomy.groupedtaxonomy[(tax_id = tax.id, )])
+    if isempty(auth)
+        return nothing
+    end
+    return only(auth.name)
 end
