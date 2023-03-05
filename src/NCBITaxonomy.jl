@@ -31,6 +31,7 @@ taxonomy = read_taxonomy(tables_path)
 scinames = filter(r -> r.class == NCBITaxonomy.class_scientific_name, taxonomy)
 groupedscinames = groupby(scinames, :tax_id)
 groupedtaxonomy = groupby(taxonomy, :tax_id)
+divisions = groupby(taxonomy, :division_code)
 
 include("taxon.jl")
 export taxon, @ncbi_str
