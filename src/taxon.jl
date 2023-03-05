@@ -5,15 +5,48 @@ Performs a search in the entire taxonomy backbone based on a known ID. This is
 the fastest way to get to a taxon, and is used internally by the tree traversal methods.
 """
 function taxon(id::Integer)
-    (id in NCBITaxonomy.scinames.tax_id) || throw(IDNotFoundInBackbone(id))
-    return NCBITaxon(
-        only(NCBITaxonomy.groupedscinames[(tax_id = id,)].name),
-        only(NCBITaxonomy.groupedscinames[(tax_id = id,)].tax_id),
-    )
+    try
+        m = only(NCBITaxonomy.groupedscinames[(tax_id = id,)])
+        return NCBITaxon(
+            m.name,
+            m.tax_id,
+        )
+    catch
+        throw(IDNotFoundInBackbone(id))
+    end
 end
 
 function _id_from_name(name::String; kwargs...)
     return _id_from_name(NCBITaxonomy.taxonomy, name; kwargs...)
+end
+
+function _strict_matches(
+    df::T,
+    name::String,
+    casesensitive::Bool,
+) where {T <: AbstractDataFrame}
+    positions = if casesensitive
+        findall(==(name), df.name)
+    else
+        findall(==(lowercase(name)), df.lowercase)
+    end
+    isempty(positions) && return nothing
+    return positions
+end
+
+function _fuzzy_matches(
+    df::T,
+    name::String,
+    casesensitive::Bool,
+    dist::Type{SD}
+) where {T <: AbstractDataFrame, SD <: StringDistance}
+    positions = if casesensitive
+        last(findnearest(name, df.name, dist()))
+    else
+        last(findnearest(lowercase(name), df.lowercase, dist()))
+    end
+    isempty(positions) && return nothing
+    return positions
 end
 
 function _id_from_name(
@@ -24,46 +57,18 @@ function _id_from_name(
     casesensitive::Bool = true,
     rank::Union{Nothing, Symbol} = nothing,
     preferscientific::Bool = false,
-    onlysynonyms::Bool = false,
 ) where {SD <: StringDistance, T <: AbstractDataFrame}
-    if !isnothing(rank)
-        @assert rank ∈ unique(df.rank)
-        df = df[findall(isequal(rank), df.rank), :]
-    end
-    if onlysynonyms
-        df = df[findall(isequal(NCBITaxonomy.class_synonym), df.class), :]
-    end
-    if strict
-        positions = if casesensitive
-            findall(isequal(name), df.name)
-        else
-            findall(isequal(lowercase(name)), df.lowercase)
-        end
-        # If the array is empty, we throw the "no name" error
-        isempty(positions) && throw(NameHasNoDirectMatch(name))
-        # If the array has a single element, this is the ticket
-        length(positions) == 1 && return df.tax_id[first(positions)]
-        # If we prefer scientific names, we can filter with this
-        if preferscientific
-            if NCBITaxonomy.class_scientific_name in df.class[positions]
-                ids = df.tax_id[positions][findall(
-                    isequal(NCBITaxonomy.class_scientific_name),
-                    df.class[positions],
-                )]
-                if length(ids) == 1
-                    return first(ids)
-                else
-                    throw(NameHasMultipleMatches(name, taxon.(ids)))
-                end
-            end
-        end
-        # If neither of these are satisfied, the name has multiple matches and we throw the appropriate error
-        taxa = taxon.(df.tax_id[positions])
-        throw(NameHasMultipleMatches(name, taxa))
+    # Perform the correct search
+    positions = if strict
+        _strict_matches(df, name, casesensitive)
     else
-        correct_name, position = findnearest(name, df.name, dist())
-        return df.tax_id[position]
+        _fuzzy_matches(df, name, casesensitive, dist)
     end
+    length(positions) == 1 && return df.tax_id[only(positions)]
+    isempty(positions) && throw(NameHasNoDirectMatch(name))
+    @info df[positions,:]
+    #taxa = taxon.(df.tax_id[positions])
+    #throw(NameHasMultipleMatches(name, taxa))
 end
 
 """
