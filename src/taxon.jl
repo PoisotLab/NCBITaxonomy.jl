@@ -12,7 +12,7 @@ function taxon(id::Integer)
     )
 end
 
-function _id_from_name(name::AbstractString; kwargs...)
+function _id_from_name(name::String; kwargs...)
     return _id_from_name(NCBITaxonomy.taxonomy, name; kwargs...)
 end
 
@@ -86,7 +86,7 @@ The keywords are:
   - `onlysynonyms` (def. `false`) - limits the search to synonyms, which may be
     useful in case the taxonomy is particularly outdated
 """
-taxon(name::AbstractString; kwargs...) = taxon(NCBITaxonomy.taxonomy, name; kwargs...)
+taxon(name::String; kwargs...) = taxon(NCBITaxonomy.taxonomy, name; kwargs...)
 
 """
     taxon(df::DataFrame, name::AbstractString; kwargs...)
