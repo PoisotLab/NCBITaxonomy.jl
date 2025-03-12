@@ -4,7 +4,7 @@
 Returns a subset of the names table where only the given taxids are present.
 """
 function namefilter(ids::Vector{T}) where {T <: Integer}
-    return leftjoin(DataFrame(; tax_id = ids), NCBITaxonomy.names_table; on = :tax_id)
+    return leftjoin(DataFrame(; tax_id = ids), NCBITaxonomy.taxonomy; on = :tax_id)
 end
 
 """
@@ -23,8 +23,7 @@ end
 Returns a subset of the names table for all names under a given NCBI division.
 """
 function namefilter(division::Symbol)
-    ids = findall(isequal(division), NCBITaxonomy.nodes_table.division_code)
-    return namefilter(NCBITaxonomy.nodes_table.tax_id[ids])
+    return NCBITaxonomy.divisions[(division_code = division,)]
 end
 
 """
@@ -34,6 +33,5 @@ Returns a subset of the names table for all names under a number of multiple
 NCBI divisions.
 """
 function namefilter(division::Vector{Symbol})
-    ids = findall(x -> x in division, NCBITaxonomy.nodes_table.division_code)
-    return namefilter(NCBITaxonomy.nodes_table.tax_id[ids])
+    return vcat(NCBITaxonomy.divisions[[(division_code = div,) for div in division]]...)
 end

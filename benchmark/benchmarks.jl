@@ -28,6 +28,8 @@ SUITE["name finders"]["mammals (inclusive)"] = @benchmarkable mammalfilter(true)
 
 SUITE["name finders"]["phage"] = @benchmarkable phagefilter()
 
+SUITE["name finders"]["descendants of Diplectanidae"] = @benchmarkable descendantsfilter(ncbi"Diplectanidae")
+
 # Ability to locate taxa
 
 SUITE["taxon search"] = BenchmarkGroup(["namefinding", "search"])
