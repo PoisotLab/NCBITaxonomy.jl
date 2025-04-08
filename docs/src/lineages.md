@@ -19,6 +19,7 @@ descending from the one given as argument. For example, the genus
 
 ```@example lineages
 using NCBITaxonomy
+using AbstractTrees
 
 ncbi"Lamellodiscus" |> AbstractTrees.children
 ```

@@ -1,6 +1,6 @@
 # Use-case: taxonomic tree
 
-In this exmaple, we will use the output of the `lineage` function to build a
+In this example, we will use the output of the `lineage` function to build a
 tree in the `Phylo.jl` package, then plot it. This example also serves as a
 showcase for the support of `AbstractTrees.jl`.
 
@@ -11,10 +11,10 @@ using NCBITaxonomy
 using AbstractTrees
 ```
 
-We will focus on the Lemuriformes infra-order:
+We will focus on _Diplectanidae_:
 
 ```@example tree
-tree_root = ncbi"Lemuriformes"
+tree_root = ncbi"Diplectanidae"
 ```
 
 We will first create a tree by adding the species as tips -- some of the taxa
