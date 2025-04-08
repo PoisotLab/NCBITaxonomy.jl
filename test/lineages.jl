@@ -12,8 +12,8 @@ using AbstractTrees
 lamellochildus = AbstractTrees.children(ncbi"Lamellodiscus")
 lamelloleavus = collect(AbstractTrees.Leaves(ncbi"Lamellodiscus"))
 
-for e in lamellochildus
-    @test e in lamelloleavus
+for e in lamelloleavus
+    @test e in lamellochildus
 end   
 
 @test AbstractTrees.intree(ncbi"Lamellodiscus", ncbi"Diplectanidae")
