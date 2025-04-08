@@ -36,6 +36,7 @@ add a few overloads to the `Phylo.jl` functions:
 
 ```@example tree
 Phylo.RootedTree(taxa::Vector{NCBITaxon}) = RootedTree([t.name for t in taxa])
+Phylo._matchnodetype(tr::RootedTree, tax::NCBITaxon) = Phylo._matchnodetype(tr, tax.name)
 Phylo._hasnode(tr::RootedTree, tax::NCBITaxon) = Phylo._hasnode(tr, tax.name)
 Phylo._getnode(tr::RootedTree, tax::NCBITaxon) = Phylo._getnode(tr, tax.name)
 Phylo._createnode!(tr::RootedTree, tax::NCBITaxon) = Phylo._createnode!(tr, tax.name)
