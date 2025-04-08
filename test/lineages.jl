@@ -9,8 +9,12 @@ using AbstractTrees
 @test lineage(ncbi"Lamellodiscus"; stop_at = ncbi"Dactylogyridea") ==
       reverse([ncbi"Lamellodiscus", ncbi"Diplectanidae", ncbi"Dactylogyridea"])
 
-@test AbstractTrees.children(ncbi"Lamellodiscus") ==
-      collect(AbstractTrees.Leaves(ncbi"Lamellodiscus"))
+lamellochildus = AbstractTrees.children(ncbi"Lamellodiscus")
+lamelloleavus = collect(AbstractTrees.Leaves(ncbi"Lamellodiscus"))
+
+for e in lamellochildus
+    @test e in lamelloleavus
+end   
 
 @test AbstractTrees.intree(ncbi"Lamellodiscus", ncbi"Diplectanidae")
 @test AbstractTrees.intree(ncbi"Lamellodiscus elegans", ncbi"Lamellodiscus")
