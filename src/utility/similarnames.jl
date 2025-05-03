@@ -19,8 +19,7 @@ distance - the pair will be returned only once.
 Additional keywords are `rank` (limit to a given rank) and `onlysynonyms`.
 """
 function similarnames(name::AbstractString; kwargs...)
-    df = NCBITaxonomy.names_table
-    return similarnames(df, name; kwargs...)
+    return similarnames(NCBITaxonomy.taxonomy, name; kwargs...)
 end
 
 """
@@ -72,6 +71,5 @@ does *strict*, *case-sensitive* searches only at the moment, but this may be
 extended through keyword arguments in a future release.
 """
 function alternativetaxa(name::AbstractString)
-    df = NCBITaxonomy.names_table
-    return alternativetaxa(df, name)
+    return alternativetaxa(NCBITaxonomy.taxonomy, name)
 end
