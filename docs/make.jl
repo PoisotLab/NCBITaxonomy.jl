@@ -9,8 +9,7 @@ makedocs(;
         "Index" => "index.md",
         "Finding taxa" => "namefinding.md",
         "Navigating lineages" => "lineages.md",
-        "Portal data use-case" => "portal.md",
-        "Phylo.jl use-case" => "phylo.md",
+        "Portal data use-case" => "portal.md",        
     ],
 )
 
