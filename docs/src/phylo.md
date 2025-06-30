@@ -11,10 +11,10 @@ using NCBITaxonomy
 using AbstractTrees
 ```
 
-We will focus on _Diplectanidae_:
+We will focus on _Lamellodiscus_:
 
 ```@example tree
-tree_root = ncbi"Diplectanidae"
+tree_root = ncbi"Lamellodiscus"
 ```
 
 We will first create a tree by adding the species as tips -- some of the taxa
